@@ -9,6 +9,6 @@ void main()
     clear_screen();
     print_string("hello val ca va ? ", YELLOW);
     vga_index = 80;
-    print_string("Versiwfwfefewfwefewoweewefwefew", RED);
+    print_string("Version 1.3", RED);
     vga_index = 160;
 }
