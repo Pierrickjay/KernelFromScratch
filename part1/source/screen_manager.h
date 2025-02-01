@@ -16,6 +16,4 @@ extern unsigned int vga_index;
 
 void clear_screen(void);
 
-void print_string(char *str, unsigned char color);
-
 #endif
