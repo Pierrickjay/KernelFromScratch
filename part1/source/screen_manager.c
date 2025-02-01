@@ -11,14 +11,3 @@ void clear_screen(void)
         terminal_buffer[index] = ' ';
     }
 }
-
-void print_string(char *str, unsigned char color)
-{
-    int index = 0;
-    while (str[index]) 
-    {
-        terminal_buffer[vga_index] = (unsigned short)str[index] | (unsigned short)color << 8;
-        index ++;
-        vga_index++;
-    }
-}
