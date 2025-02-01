@@ -19,3 +19,7 @@ or basic functions (strlen, strcmp, ...)
     - `egrep -c '(vmx|svm)' /proc/cpuinfo` have to return a non 0 
     - `sudo kvm-ok` output should say that u can run kvm acceleration
         - If error install cpu-checker `sudo apt install cpu-checker`
+
+# To verify
+
+grub-file --is-x86-multiboot kfs1

@@ -7,6 +7,11 @@ do_install() {
     sudo apt install qemu-kvm libvirt-daemon-system libvirt-clients bridge-utils -y
     sudo adduser ${USER} libvirt
     sudo adduser ${USER} kvm
+    # # GRUB
+    # sudo apt install grub-common
+    # ASM
+    sudo apt install nasm
+    sudo apt-get install xorriso
 }
 
 
