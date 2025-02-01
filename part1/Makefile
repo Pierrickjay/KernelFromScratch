@@ -11,7 +11,9 @@ LINKER_OPTIONS = -m elf_i386 -T
 SRC_DIRECTORY = source/
 
 C_FILES = main.c \
-	screen_manager.c
+	screen_manager.c \
+	print_manager.c \
+	memory_manager.c 
 
 ASM_FILES = boot.asm
 
