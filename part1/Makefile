@@ -1,48 +1,69 @@
-
+# Compilers
 C_COMPILER = gcc
-C_OPTION = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c 
-ASM_COMPILER= nasm
-ASM_OPTION= -f elf32
+C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
+ASM_COMPILER = nasm
+ASM_OPTIONS = -f elf32
 
-SRC_DIRECTORY=source/
-OBJ_DIRECTORY=obj/
+LINKER = ld
+LINKER_OPTIONS = -m elf_i386 -T
 
-LINKER=ld
-LINKER_OPTION=-m elf_i386 -T
+# Source files
+SRC_DIRECTORY = source/
 
-C_FILE=
+C_FILES = main.c \
+	screen_manager.c
 
-LINKER_FILE=$(SRC_DIRECTORY)linker.ld
+ASM_FILES = boot.asm
 
-TARGET=kfs1
+LINKER_FILE = $(SRC_DIRECTORY)linker.ld
 
-all: $(TARGET)
+GRUB_CFG = $(SRC_DIRECTORY)grub.cfg
 
-# TRouvre une autre maniere que l'etoile
-$(TARGET):
+# Targets files
+OBJ_DIRECTORY = obj/
+
+KERNEL_NAME = kfs
+KERNEL_VERSION = 1
+
+ASM_OBJ = $(addprefix $(OBJ_DIRECTORY), $(ASM_FILES:.asm=.o))
+C_OBJ = $(addprefix $(OBJ_DIRECTORY), $(C_FILES:.c=.o))
+OBJ = $(ASM_OBJ) $(C_OBJ)
+DEPS := ${OBJ:.o=.d}
+
+CODE_TARGET = $(OBJ_DIRECTORY)$(KERNEL_NAME)$(KERNEL_VERSION)
+
+ISO_TARGET = $(KERNEL_NAME)$(KERNEL_VERSION).iso
+
+# Rules
+all: $(ISO_TARGET)
+
+$(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
-	$(ASM_COMPILER) $(ASM_OPTION) $(SRC_DIRECTORY)boot.asm -o $(OBJ_DIRECTORY)boot.o
-	$(C_COMPILER) $(C_OPTION) $(SRC_DIRECTORY)main.c -o $(OBJ_DIRECTORY)main.o
-	$(C_COMPILER) $(C_OPTION) $(SRC_DIRECTORY)screen_manager.c -o $(OBJ_DIRECTORY)screen_manager.o
-	$(LINKER) $(LINKER_OPTION) $(LINKER_FILE) -o $(TARGET) obj/*.o
-	cp kfs1 $(OBJ_DIRECTORY)iso/boot
-	cp $(SRC_DIRECTORY)grub.cfg $(OBJ_DIRECTORY)iso/boot/grub/
-	grub-mkrescue -o kfs1.iso $(OBJ_DIRECTORY)iso/
+	cp $(CODE_TARGET) $(OBJ_DIRECTORY)iso/boot
+	cp $(GRUB_CFG) $(OBJ_DIRECTORY)iso/boot/grub/
+	grub-mkrescue -o $(ISO_TARGET) $(OBJ_DIRECTORY)iso/
+
+$(CODE_TARGET): $(C_OBJ) $(ASM_OBJ)
+	$(LINKER) $(LINKER_OPTIONS) $(LINKER_FILE) -o $(CODE_TARGET) $(OBJ)
+
+$(OBJ_DIRECTORY):
+	mkdir -p $(OBJ_DIRECTORY)
+
+$(ASM_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.asm | $(OBJ_DIRECTORY)
+	$(ASM_COMPILER) $(ASM_OPTIONS) $< -o $@
+
+$(C_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.c | $(OBJ_DIRECTORY)
+	$(C_COMPILER) $(C_OPTIONS) $< -o $@
 
 clean:
+	-rm $(DEPS)
 	rm -rf $(OBJ_DIRECTORY)
 
 fclean : clean
-	rm -rf $(TARGET)
-	rm -rf $(TARGET).iso
+	rm -rf $(ISO_TARGET)
 
 re: fclean all
 
-# -fno-builtin
-# • -fno-exception
-# • -fno-stack-protector
-# • -fno-rtti
-# • -nostdlib
-# • -nodefaultlibs
+.PHONY: all clean fclean re
 
-# trouver leur equivalent rust
+-include $(DEPS)
