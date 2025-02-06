@@ -31,6 +31,7 @@ ASM_OBJ = $(addprefix $(OBJ_DIRECTORY), $(ASM_FILES:.asm=.o))
 C_OBJ = $(addprefix $(OBJ_DIRECTORY), $(C_FILES:.c=.o))
 OBJ = $(ASM_OBJ) $(C_OBJ)
 DEPS := ${OBJ:.o=.d}
+QEMU := /usr/bin/qemu-system-x86_64
 
 CODE_TARGET = $(OBJ_DIRECTORY)$(KERNEL_NAME)$(KERNEL_VERSION)
 
@@ -56,6 +57,9 @@ $(ASM_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.asm | $(OBJ_DIRECTORY)
 
 $(C_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.c | $(OBJ_DIRECTORY)
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
+
+virtualisation: all
+	 $(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
 clean:
 	-rm $(DEPS)
