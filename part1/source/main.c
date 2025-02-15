@@ -49,5 +49,5 @@ void main()
     print_string("Versiwfwfefewfwefewoweewefwefew", RED);
     print_carriage_return();
 
-    // print_42();
+    print_42();
 }
