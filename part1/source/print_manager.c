@@ -6,7 +6,7 @@ void print_carriage_return(void)
     vga_index += L_WINDOW - (vga_index % L_WINDOW);
 }
 
-void print_string(char *str, unsigned char color)
+int print_string(char *str, unsigned char color)
 {
     int index = 0;
     while (str[index]) 
@@ -14,91 +14,97 @@ void print_string(char *str, unsigned char color)
         print_char(str[index], color);
         index ++;
     }
+    return index;
 }
 
 void print_char(char c, unsigned char color)
 {
+    if (c == '\n')
+    {
+        print_carriage_return();
+        return;
+    }
     terminal_buffer[vga_index] = (unsigned short)c | (unsigned short)color << 8;
     vga_index++;
 }
 
-void print_number(int nb, int *count, unsigned char color)
+int print_number(int nb, unsigned char color)
 {
-	unsigned int	b;
+    int len_nb = intlen(nb) + 1;
+	char    str[len_nb];
 
-	if (nb < 0)
-	{
-		b = nb * -1;
-        count++;
-		print_char('-', color);
-	}
-	else
-	{
-		b = nb;
-	}
-	if (b >= 10)
-	{
-		print_number(b / 10, &count, color);
-		print_number(b % 10, &count, color);
-	}
-	else
-	{
-        count++;
-		print_char((b + 48), color);
-	}
+    itoa(nb, str);
+    print_string(str, color);
+    return len_nb;    
 }
 
-void print_hex(int hex, int *count, unsigned char color)
+void print_hex(int hex, unsigned char color)
 {
     char base[] = "0123456789abcdef";
     if (hex > HEX_BASE_SIZE - 1)
 	{
-		print_hex(hex / HEX_BASE_SIZE, &count, color);
+		print_hex(hex / HEX_BASE_SIZE, color);
 		hex %= HEX_BASE_SIZE;
 	}
-    count++;
 	print_char(&base[hex], color);
-	return (count + 1);
 }
 
-int print_k(const char *str, ...)
+int print_f(char *str, ...)
 {
-    struct arg_list args;
+    int     *args;
+    char    *format;
+    int     i = 0;
+    char    tmp_addr[9];
+    int     total_print = 0;
 
-    char hex_tmp[9];
-    init_args(&args, str);
-    int total_read = 0;
-
-    while (*str)
+    args = (int *)(&str); // pointer of args 
+    format = (char *)(*args++); // Pointer to char in first string 
+    i = 0;
+    while (format[i])
     {
-        if (*str == '%')
+        if (format[i] == '%')
         {
-            str++;
-            switch (*str)
+            if (format[i + 1] == '\0')  // Si % est le dernier caractère
             {
-                case  'd':
-                    int count_dec = 0;
-                    print_number(get_string_arg(&args), &count_dec, WHITE);
-                    total_read += count_dec;
+                print_char('%', WHITE);
+                total_print++;
+                break;
+            }
+            i++;
+            switch (format[i])
+            {
+                case '%':  // Gestion de %%
+                    print_char('%', WHITE);
+                    total_print++;
+                    break;
+                case 'd':
+                     total_print += print_number(*args++, WHITE);
                     break;
                 case 's':
-                    print_string(get_string_arg(&args), WHITE); // ici on doit compter les charac
+                    total_print += print_string(*((char **)args++), WHITE);
+                    break;
                 case 'c':
-                    print_char(get_char_arg(&args), WHITE);
-                    total_read++;
+                    print_char(*args++, WHITE);
+                    total_print++;
+                    break;
                 case 'x':
                     int count_hex = 0;
-                    print_hex(get_int_arg(&args), &count_hex, WHITE);
-                    total_read += count_hex;
-
+                    print_hex(*args++, WHITE);
+                    total_print += count_hex;
+                    break;
                 default:
+                    print_char('%', WHITE);
+                    print_char(format[i], WHITE);
+                    total_print += 2;
                     break;
             }
         }
         else
-            print_char(*str, WHITE);
-            total_read++;
-        str++;    
+        {
+            print_char(format[i], WHITE);
+            total_print++;
+        }
+        i++;
     }
-    return total_read;
+    return total_print;
 }

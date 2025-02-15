@@ -6,12 +6,11 @@
 #include "screen_manager.h"
 #include "utils.h"
 
-void print_number(int nb,int *count, unsigned char color);
+int print_number(int nb, unsigned char color);
+int print_string(char *str, unsigned char color);
 void print_char(char c, unsigned char color);
-void print_string(char *str, unsigned char color);
 void print_carriage_return(void);
-int print_k(const char *str, ...);
 
+int print_f(char *str, ...);
 
 #endif
-

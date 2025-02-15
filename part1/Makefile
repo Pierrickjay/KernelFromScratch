@@ -13,7 +13,8 @@ SRC_DIRECTORY = source/
 C_FILES = main.c \
 	screen_manager.c \
 	print_manager.c \
-	memory_manager.c 
+	memory_manager.c \
+	utils.c
 
 ASM_FILES = boot.asm
 
@@ -40,6 +41,10 @@ ISO_TARGET = $(KERNEL_NAME)$(KERNEL_VERSION).iso
 # Rules
 all: $(ISO_TARGET)
 
+virtualisation: all
+	unset GTK_PATH
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
+
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
 	cp $(CODE_TARGET) $(OBJ_DIRECTORY)iso/boot
@@ -58,8 +63,6 @@ $(ASM_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.asm | $(OBJ_DIRECTORY)
 $(C_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.c | $(OBJ_DIRECTORY)
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
 
-virtualisation: all
-	 $(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
 clean:
 	-rm $(DEPS)

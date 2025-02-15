@@ -36,18 +36,21 @@ void main()
 {
     terminal_buffer = (unsigned short*)VGA_ADDRESS;
     vga_index = 0;
-    int nb;
+    int nb = 8;
     clear_screen();
     print_string("hello val ca va ? ", YELLOW);
     print_carriage_return();
     print_char('D', GREEN);
     print_carriage_return();
-    print_number(8988, &nb, GREEN);
+    print_number(8988, GREEN);
+    print_f("ceci est un int test %d", 123);
     print_carriage_return();
-    print_k("ceci est un test ", 123);
+    print_f("ceci est un char test %c", 'C');
     print_carriage_return();
-    print_string("Versiwfwfefewfwefewoweewefwefew", RED);
-    print_carriage_return();
+    int test = print_f("ceci est un string test %s", "frefjreferf");
+    // print_f("ceci est un hex test %x", &nb);
+    print_string("Versiwfwfefewfwefewoweewefwefew\n", RED);
+    print_number(test ,GREEN);
 
     print_42();
 }
