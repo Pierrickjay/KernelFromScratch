@@ -21,8 +21,8 @@
 #define H_WINDOW 25
 #define L_WINDOW 80
 
-extern unsigned short* terminal_buffer;
-extern unsigned int vga_index;
+extern unsigned short *terminal_buffer;
+extern unsigned int	   vga_index;
 
 void clear_screen(void);
 

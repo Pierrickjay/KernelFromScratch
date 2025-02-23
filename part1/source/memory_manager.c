@@ -1,11 +1,11 @@
 #include "memory_manager.h"
 
-void	*ft_memset( void *s, int c, int n )
+void *ft_memset(void *s, int c, int n)
 {
-	char	*str;
-	int	i;
+	char *str;
+	int	  i;
 
-	i = 0;
+	i	= 0;
 	str = s;
 	while (i < n)
 	{
