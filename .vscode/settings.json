@@ -36,7 +36,10 @@
 		"ostream": "c",
 		"sstream": "c",
 		"stdexcept": "c",
-		"streambuf": "c"
+		"streambuf": "c",
+		"cstdint": "c",
+		"types.h": "c",
+		"cursor.h": "c"
 	},
 	"editor.tabSize": 4,
 	"prettier.useTabs": true,
