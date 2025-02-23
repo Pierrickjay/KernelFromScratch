@@ -1,10 +1,9 @@
 bits 32
 
 section .multiboot               ;according to multiboot spec
-        dd 0x1BADB002            ;set magic number for
-                                 ;bootloader
-        dd 0x0                   ;set flags
-        dd - (0x1BADB002 + 0x0)  ;set checksum
+        dd 0x1BADB002            ; Magic number (permet au BIOS de reconnaître ton kernel)
+        dd 0x0                   ; Flags (options de démarrage)
+        dd - (0x1BADB002 + 0x0)  ; Checksum (pour vérifier l'intégrité)
 
 section .text
 global start
