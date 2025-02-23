@@ -6,9 +6,9 @@
 #include "screen_manager.h"
 #include "utils.h"
 
-int	 print_number(int nb, unsigned char color);
-int	 print_string(char *str, unsigned char color);
-void print_char(char c, unsigned char color);
+int	 print_number(int nb);
+int	 print_string(char *str);
+void print_char(char c);
 
 int print_f(char *str, ...);
 

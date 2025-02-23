@@ -1,40 +1,40 @@
 #include "print_manager.h"
 
-int print_string(char *str, unsigned char color)
+int print_string(char *str)
 {
 	int index = 0;
 	while (str[index])
 	{
-		print_char(str[index], color);
+		print_char(str[index]);
 		index++;
 	}
 	return index;
 }
 
-void print_char(char c, unsigned char color)
+void print_char(char c)
 {
-	kfs_write_char(&screen_context, c, color);
+	kfs_write_char(&screen_context, c);
 }
 
-int print_number(int nb, unsigned char color)
+int print_number(int nb)
 {
 	int	 len_nb = intlen(nb) + 1;
 	char str[len_nb];
 
 	itoa(nb, str);
-	print_string(str, color);
+	print_string(str);
 	return len_nb;
 }
 
-void print_hex(int hex, unsigned char color)
+void print_hex(int hex)
 {
 	char base[] = "0123456789abcdef";
 	if (hex > HEX_BASE_SIZE - 1)
 	{
-		print_hex(hex / HEX_BASE_SIZE, color);
+		print_hex(hex / HEX_BASE_SIZE);
 		hex %= HEX_BASE_SIZE;
 	}
-	print_char(base[hex], color);
+	print_char(base[hex]);
 }
 
 int print_f(char *str, ...)
@@ -54,7 +54,7 @@ int print_f(char *str, ...)
 		{
 			if (format[i + 1] == '\0') // Si % est le dernier caractère
 			{
-				print_char('%', WHITE);
+				print_char('%');
 				total_print++;
 				break;
 			}
@@ -62,34 +62,34 @@ int print_f(char *str, ...)
 			switch (format[i])
 			{
 				case '%': // Gestion de %%
-					print_char('%', WHITE);
+					print_char('%');
 					total_print++;
 					break;
 				case 'd':
-					total_print += print_number(*args++, WHITE);
+					total_print += print_number(*args++);
 					break;
 				case 's':
-					total_print += print_string(*((char **)args++), WHITE);
+					total_print += print_string(*((char **)args++));
 					break;
 				case 'c':
-					print_char(*args++, WHITE);
+					print_char(*args++);
 					total_print++;
 					break;
 				case 'x':
 					int count_hex = 0;
-					print_hex(*args++, WHITE);
+					print_hex(*args++);
 					total_print += count_hex;
 					break;
 				default:
-					print_char('%', WHITE);
-					print_char(format[i], WHITE);
+					print_char('%');
+					print_char(format[i]);
 					total_print += 2;
 					break;
 			}
 		}
 		else
 		{
-			print_char(format[i], WHITE);
+			print_char(format[i]);
 			total_print++;
 		}
 		i++;
