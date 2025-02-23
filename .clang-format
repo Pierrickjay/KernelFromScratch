@@ -1,0 +1,16 @@
+UseTab: Always
+IndentWidth: 4
+TabWidth: 4
+BreakBeforeBraces: Allman
+IndentCaseLabels: true
+ColumnLimit: 100
+AlignAfterOpenBracket: Align
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+
+AlignConsecutiveDeclarations: true
+AlignConsecutiveAssignments: true
+DerivePointerAlignment: false
+PointerAlignment: Right
