@@ -63,6 +63,8 @@ $(ASM_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.asm | $(OBJ_DIRECTORY)
 $(C_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.c | $(OBJ_DIRECTORY)
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
 
+format:
+	clang-format -i $(SRC_DIRECTORY)*.c $(SRC_DIRECTORY)*.h
 
 clean:
 	-rm $(DEPS)
@@ -73,6 +75,6 @@ fclean : clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re format
 
 -include $(DEPS)
