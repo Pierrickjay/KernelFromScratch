@@ -2,6 +2,7 @@
 
 void *ft_memset(void *s, int c, int n)
 {
+	// @TODO ? : can be optimized by using word-sized operations
 	char *str;
 	int	  i;
 

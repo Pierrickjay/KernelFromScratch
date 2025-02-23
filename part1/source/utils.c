@@ -2,6 +2,12 @@
 #include "utils.h"
 #include "memory_manager.h"
 
+void init_position(t_position *pos)
+{
+	pos->x = 0;
+	pos->y = 0;
+}
+
 void itoa(int n, char *str)
 {
 	int nb;

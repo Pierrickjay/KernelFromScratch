@@ -1,10 +1,5 @@
 #include "print_manager.h"
 
-void print_carriage_return(void)
-{
-	vga_index += L_WINDOW - (vga_index % L_WINDOW);
-}
-
 int print_string(char *str, unsigned char color)
 {
 	int index = 0;
@@ -18,13 +13,7 @@ int print_string(char *str, unsigned char color)
 
 void print_char(char c, unsigned char color)
 {
-	if (c == '\n')
-	{
-		print_carriage_return();
-		return;
-	}
-	terminal_buffer[vga_index] = (unsigned short)c | (unsigned short)color << 8;
-	vga_index++;
+	kfs_write_char(&screen_context, c, color);
 }
 
 int print_number(int nb, unsigned char color)
