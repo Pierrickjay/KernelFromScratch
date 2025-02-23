@@ -1,0 +1,9 @@
+{
+  "files.associations": {
+    "chrono": "c",
+    "variant": "c",
+    "screen_manager.h": "c"
+  },
+  "editor.tabSize": 4,
+  "prettier.useTabs": true
+}
