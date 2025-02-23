@@ -49,9 +49,9 @@ void main()
 	// print_f("ceci est un hex test %x", &nb);
 	set_color(&screen_context, RED);
 	print_string("Versiwfwfefewfwefewoweewefwefew\n");
-	set_color(&screen_context, GREEN);
+	set_color(&screen_context, WHITE);
 	print_number(test);
 
-	kfs_write_colored_char(&screen_context, '\n', WHITE);
+	kfs_write_char(&screen_context, '\n');
 	print_42();
 }
