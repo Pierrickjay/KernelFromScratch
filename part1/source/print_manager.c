@@ -46,7 +46,7 @@ void print_hex(int hex, unsigned char color)
 		print_hex(hex / HEX_BASE_SIZE, color);
 		hex %= HEX_BASE_SIZE;
 	}
-	print_char(&base[hex], color);
+	print_char(base[hex], color);
 }
 
 int print_f(char *str, ...)
