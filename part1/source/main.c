@@ -36,15 +36,11 @@ void main()
 	set_color(&screen_context, YELLOW);
 	print_string("hello val ca va ? ");
 	set_color(&screen_context, GREEN);
-	print_char('\n');
-	print_char('D');
-	print_char('\n');
+	print_f("\nD\n");
 	print_number(8988);
 	set_color(&screen_context, WHITE);
-	print_f("ceci est un int test %d", 123);
-	print_char('\n');
-	print_f("ceci est un char test %c", 'C');
-	print_char('\n');
+	print_f("ceci est un int test %d\n", 123);
+	print_f("ceci est un char test %c\n", 'C');
 	int test = print_f("ceci est un string test %s", "frefjreferf");
 	// print_f("ceci est un hex test %x", &nb);
 	set_color(&screen_context, RED);
@@ -54,4 +50,7 @@ void main()
 
 	kfs_write_char(&screen_context, '\n');
 	print_42();
+
+	kfs_write_char(&screen_context, 'a');
+	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 }

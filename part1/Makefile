@@ -14,6 +14,8 @@ C_FILES = main.c \
 	screen_manager.c \
 	print_manager.c \
 	memory_manager.c \
+	cursor.c \
+	io.c \
 	utils.c
 
 ASM_FILES = boot.asm

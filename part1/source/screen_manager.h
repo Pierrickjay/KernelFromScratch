@@ -1,6 +1,8 @@
 #ifndef SCREEN_MANAGER_H
 #define SCREEN_MANAGER_H
 
+#include "cursor.h"
+#include "types.h"
 #include "utils.h"
 
 #define VGA_ADDRESS 0xB8000
@@ -19,6 +21,9 @@
 
 #define BG(color) (color << 4)
 
+#define MAKE_ATTRIBUTE(fg, bg) (BG(bg) | fg)
+#define DEFAULT_ATTRIBUTE MAKE_ATTRIBUTE(WHITE, BLACK)
+
 // Window size (determines in boot.asm)
 #define H_WINDOW 25
 #define L_WINDOW 80
@@ -35,7 +40,7 @@ typedef struct s_character_cell
 
 typedef struct s_desktop
 {
-	t_position		 cursor;					// private
+	t_cursor		 cursor;					// private
 	t_character_cell cells[L_WINDOW][H_WINDOW]; // private
 } t_desktop;
 
