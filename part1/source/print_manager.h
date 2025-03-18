@@ -8,8 +8,6 @@
 
 int	 print_number(int nb, unsigned char color);
 int	 print_string(char *str, unsigned char color);
-void print_char(char c, unsigned char color);
-void print_carriage_return(void);
 
 int print_f(char *str, ...);
 
