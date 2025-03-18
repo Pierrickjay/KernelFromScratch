@@ -23,19 +23,19 @@ void main()
 	int nb = 8;
 	clear_screen(&screen_context);
 	print_string("hello val ca va ? ", YELLOW);
-	print_char('\n', WHITE);
-	print_char('D', GREEN);
-	print_char('\n', WHITE);
+	kfs_write_char(&screen_context, '\n', WHITE);
+	kfs_write_char(&screen_context, 'D', GREEN);
+	kfs_write_char(&screen_context, '\n', WHITE);
 	print_number(8988, GREEN);
 	print_f("ceci est un int test %d", 123);
-	print_char('\n', WHITE);
+	kfs_write_char(&screen_context, '\n', WHITE);
 	print_f("ceci est un char test %c", 'C');
-	print_char('\n', WHITE);
+	kfs_write_char(&screen_context, '\n', WHITE);
 	int test = print_f("ceci est un string test %s", "frefjreferf");
 	// print_f("ceci est un hex test %x", &nb);
 	print_string("Versiwfwfefewfwefewoweewefwefew\n", RED);
 	print_number(test, GREEN);
 
-	print_char('\n', WHITE);
+	kfs_write_char(&screen_context, '\n', WHITE);
 	print_42();
 }

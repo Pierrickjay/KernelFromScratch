@@ -5,15 +5,10 @@ int print_string(char *str, unsigned char color)
 	int index = 0;
 	while (str[index])
 	{
-		print_char(str[index], color);
+		kfs_write_char(&screen_context, str[index], color);
 		index++;
 	}
 	return index;
-}
-
-void print_char(char c, unsigned char color)
-{
-	kfs_write_char(&screen_context, c, color);
 }
 
 int print_number(int nb, unsigned char color)
@@ -34,7 +29,7 @@ void print_hex(int hex, unsigned char color)
 		print_hex(hex / HEX_BASE_SIZE, color);
 		hex %= HEX_BASE_SIZE;
 	}
-	print_char(base[hex], color);
+	kfs_write_char(&screen_context, base[hex], color);
 }
 
 int print_f(char *str, ...)
@@ -54,7 +49,7 @@ int print_f(char *str, ...)
 		{
 			if (format[i + 1] == '\0') // Si % est le dernier caractère
 			{
-				print_char('%', WHITE);
+				kfs_write_char(&screen_context, '%', WHITE);
 				total_print++;
 				break;
 			}
@@ -62,7 +57,7 @@ int print_f(char *str, ...)
 			switch (format[i])
 			{
 				case '%': // Gestion de %%
-					print_char('%', WHITE);
+					kfs_write_char(&screen_context, '%', WHITE);
 					total_print++;
 					break;
 				case 'd':
@@ -72,7 +67,7 @@ int print_f(char *str, ...)
 					total_print += print_string(*((char **)args++), WHITE);
 					break;
 				case 'c':
-					print_char(*args++, WHITE);
+					kfs_write_char(&screen_context, *args++, WHITE);
 					total_print++;
 					break;
 				case 'x':
@@ -81,15 +76,15 @@ int print_f(char *str, ...)
 					total_print += count_hex;
 					break;
 				default:
-					print_char('%', WHITE);
-					print_char(format[i], WHITE);
+					kfs_write_char(&screen_context, '%', WHITE);
+					kfs_write_char(&screen_context, format[i], WHITE);
 					total_print += 2;
 					break;
 			}
 		}
 		else
 		{
-			print_char(format[i], WHITE);
+			kfs_write_char(&screen_context, format[i], WHITE);
 			total_print++;
 		}
 		i++;
