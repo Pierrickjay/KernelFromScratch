@@ -3,17 +3,28 @@
 
 void print_42(void)
 {
-	print_string("              42424  42424242424\n", BG(RED | INTENSIVE) | BLUE);
-	print_string("           42424     4242  42424\n", BG(BLUE | INTENSIVE) | GREEN);
-	print_string("        42424        42    42424\n", BG(GREEN | INTENSIVE) | RED);
-	print_string("     42424               42424\n", BG(CYAN | INTENSIVE) | YELLOW);
-	print_string("  42424                42424\n", BG(YELLOW | INTENSIVE) | MAGENTA);
-	print_string("4242424242424242424  42424    42\n", BG(MAGENTA | INTENSIVE) | CYAN);
-	print_string("4242424242424242424  42424  4242\n", BG(BLUE | INTENSIVE) | GREEN | INTENSIVE);
-	print_string("               4242  42424242424\n", BG(WHITE | INTENSIVE) | RED | INTENSIVE);
-	print_string("               4242\n", BG(YELLOW | INTENSIVE) | YELLOW | INTENSIVE);
-	print_string("               4242\n", BG(GREEN | INTENSIVE) | MAGENTA | INTENSIVE);
-	print_string("               4242\n", BG(RED | INTENSIVE) | BLUE | INTENSIVE);
+	set_color(&screen_context, BG(RED) | BLUE);
+	print_string("              42424  42424242424\n");
+	set_color(&screen_context, BG(BLUE) | GREEN);
+	print_string("           42424     4242  42424\n");
+	set_color(&screen_context, BG(GREEN) | RED);
+	print_string("        42424        42    42424\n");
+	set_color(&screen_context, BG(CYAN) | YELLOW);
+	print_string("     42424               42424\n");
+	set_color(&screen_context, BG(YELLOW) | MAGENTA);
+	print_string("  42424                42424\n");
+	set_color(&screen_context, BG(MAGENTA) | CYAN);
+	print_string("4242424242424242424  42424    42\n");
+	set_color(&screen_context, BG(BLUE) | GREEN | INTENSIVE);
+	print_string("4242424242424242424  42424  4242\n");
+	set_color(&screen_context, BG(WHITE) | RED | INTENSIVE);
+	print_string("               4242  42424242424\n");
+	set_color(&screen_context, BG(YELLOW) | YELLOW | INTENSIVE);
+	print_string("               4242\n");
+	set_color(&screen_context, BG(GREEN) | MAGENTA | INTENSIVE);
+	print_string("               4242\n");
+	set_color(&screen_context, BG(RED) | BLUE | INTENSIVE);
+	print_string("               4242\n");
 }
 
 void main()
@@ -22,20 +33,25 @@ void main()
 
 	int nb = 8;
 	clear_screen(&screen_context);
-	print_string("hello val ca va ? ", YELLOW);
-	kfs_write_char(&screen_context, '\n', WHITE);
-	kfs_write_char(&screen_context, 'D', GREEN);
-	kfs_write_char(&screen_context, '\n', WHITE);
-	print_number(8988, GREEN);
+	set_color(&screen_context, YELLOW);
+	print_string("hello val ca va ? ");
+	set_color(&screen_context, GREEN);
+	print_char('\n');
+	print_char('D');
+	print_char('\n');
+	print_number(8988);
+	set_color(&screen_context, WHITE);
 	print_f("ceci est un int test %d", 123);
-	kfs_write_char(&screen_context, '\n', WHITE);
+	print_char('\n');
 	print_f("ceci est un char test %c", 'C');
-	kfs_write_char(&screen_context, '\n', WHITE);
+	print_char('\n');
 	int test = print_f("ceci est un string test %s", "frefjreferf");
 	// print_f("ceci est un hex test %x", &nb);
-	print_string("Versiwfwfefewfwefewoweewefwefew\n", RED);
-	print_number(test, GREEN);
+	set_color(&screen_context, RED);
+	print_string("Versiwfwfefewfwefewoweewefwefew\n");
+	set_color(&screen_context, GREEN);
+	print_number(test);
 
-	kfs_write_char(&screen_context, '\n', WHITE);
+	kfs_write_colored_char(&screen_context, '\n', WHITE);
 	print_42();
 }

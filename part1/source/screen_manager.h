@@ -46,6 +46,8 @@ typedef struct s_screen_context
 	t_desktop	   desktops[DESKTOP_COUNT]; // private
 	unsigned int   desktop_index;			// private
 	unsigned char *vga_buffer;				// private
+
+	unsigned char color; // private
 } t_screen_context;
 
 extern t_screen_context screen_context;
@@ -54,7 +56,11 @@ extern t_screen_context screen_context;
 void init_screen_context(t_screen_context *ctx);
 
 // Main functions
-void kfs_write_char(t_screen_context *ctx, unsigned char c, unsigned char color);
+void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned char color);
+void kfs_write_char(t_screen_context *ctx, unsigned char c);
 void clear_screen(t_screen_context *ctx);
+
+// Utility functions
+void set_color(t_screen_context *ctx, unsigned char color);
 
 #endif

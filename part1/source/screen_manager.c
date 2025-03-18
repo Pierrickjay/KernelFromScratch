@@ -69,7 +69,7 @@ void set_cursor(t_screen_context *ctx, t_position pos)
 	ctx->desktops[ctx->desktop_index].cursor = pos;
 }
 
-void kfs_write_char(t_screen_context *ctx, unsigned char c, unsigned char color)
+void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned char color)
 {
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
 
@@ -90,11 +90,26 @@ void kfs_write_char(t_screen_context *ctx, unsigned char c, unsigned char color)
 	}
 }
 
-void clear_screen(t_screen_context *ctx)
+void kfs_write_char(t_screen_context *ctx, unsigned char c)
+{
+	kfs_write_colored_char(ctx, c, ctx->color);
+}
+
+void clear_screen_colored(t_screen_context *ctx, unsigned char color)
 {
 	set_cursor(ctx, (t_position){0, 0});
 	for (int index = 0; index < SCREEN_CELLS_SIZE; index++)
 	{
-		kfs_write_char(ctx, ' ', WHITE);
+		kfs_write_colored_char(ctx, ' ', color);
 	}
+}
+
+void clear_screen(t_screen_context *ctx)
+{
+	clear_screen_colored(ctx, BLACK);
+}
+
+void set_color(t_screen_context *ctx, unsigned char color)
+{
+	ctx->color = color;
 }
