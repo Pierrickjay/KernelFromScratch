@@ -17,7 +17,8 @@ C_FILES = main.c \
 	cursor.c \
 	io.c \
 	utils.c \
-	interrupts.c
+	interrupts.c \
+	keyboard_interrupts.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm
