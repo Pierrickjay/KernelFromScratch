@@ -1,15 +1,16 @@
-global _gdt_flush ; make the function available to other files
 
-extern _gp ; _gp is in an other file
+global gdt_flush
 
-_gdt_flush:
-    lgdt [_gp] ; load the GDT
-    mov ax, 0x10 ; 0x10 is the offset in the GDT of the kernel code segment
-    mov ds, ax ; load the data segment registers
-    mov es, ax
-    mov fs, ax
-    mov gs, ax
-    mov ss, ax ; load the stack segment register
-    jmp 0x08:flush ; 0x08 is the offset in the GDT of the kernel data segment
-flush:
-    ret ; return to the caller
+gdt_flush:
+   mov eax, [esp+4]     ; 1st parameter : pointer to the IDT
+   lgdt [eax]
+   mov ax, 0x10         ; 0x10 is the offset in the GDT to our data segment
+   mov ds, ax           ; Load all data segment selectors
+   mov fs, ax
+   mov gs, ax
+   mov es, ax
+   mov ax, 0x18         ; 0x18 is the offset in the GDT to our kernel stack
+   mov ss, ax
+   jmp 0x08:.flush      ; 0x08 is the offset to our code segment: far jump on it
+.flush:
+   ret

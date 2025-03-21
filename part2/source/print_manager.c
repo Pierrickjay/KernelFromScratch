@@ -50,7 +50,7 @@ void print_hex(int hex, unsigned char color)
 
 int print_f(char *str, ...)
 {
-	int	 *args;
+	int	*args;
 	char *format;
 	int	  i = 0;
 	char  tmp_addr[9];

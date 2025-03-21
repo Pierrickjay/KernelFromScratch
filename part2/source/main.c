@@ -1,6 +1,6 @@
+#include "gdt.h"
 #include "print_manager.h"
 #include "screen_manager.h"
-#include "gdt.h"
 
 void next_line(void)
 {
@@ -34,7 +34,7 @@ void print_42(void)
 
 void test_print()
 {
-	int nb			= 8;
+	int nb = 8;
 	print_string("hello val ca va ? ", YELLOW);
 	print_carriage_return();
 	print_char('D', GREEN);
@@ -54,12 +54,11 @@ void test_print()
 void main()
 {
 	gdt_install();
-	
+	clear_screen();
+
 	terminal_buffer = (unsigned short *)VGA_ADDRESS;
 	vga_index		= 0;
-	
-	clear_screen();
+
 	// test_print();
 	// print_42();
-
 }
