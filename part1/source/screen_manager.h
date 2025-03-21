@@ -75,6 +75,7 @@ void kfs_write_char(t_screen_context *ctx, unsigned char c);
 void clear_screen(t_screen_context *ctx);
 
 // Utility functions
-void set_color(t_screen_context *ctx, unsigned char color);
+unsigned char get_color(t_screen_context *ctx);
+void		  set_color(t_screen_context *ctx, unsigned char color);
 
 #endif
