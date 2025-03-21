@@ -5,8 +5,6 @@
 
 #define IDT_ENTRIES 256
 
-#define KEYBOARD_PORT 0x60
-
 // Interrupt Descriptor Table
 typedef struct idt_entry
 {
@@ -24,7 +22,5 @@ typedef struct idt_ptr
 } __attribute__((packed)) t_idt_ptr;
 
 void init_interrupts(void);
-
-void keyboard_handler(void);
 
 #endif
