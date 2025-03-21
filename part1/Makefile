@@ -16,9 +16,11 @@ C_FILES = main.c \
 	memory_manager.c \
 	cursor.c \
 	io.c \
-	utils.c
+	utils.c \
+	interrupts.c
 
-ASM_FILES = boot.asm
+ASM_FILES = boot.asm \
+	interrupt_handlers.asm
 
 LINKER_FILE = $(SRC_DIRECTORY)linker.ld
 
