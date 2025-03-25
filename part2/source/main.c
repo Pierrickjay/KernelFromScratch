@@ -54,11 +54,11 @@ void test_print()
 void main()
 {
 	gdt_install();
-	clear_screen();
+	// clear_screen();
 
-	terminal_buffer = (unsigned short *)VGA_ADDRESS;
-	vga_index		= 0;
+	// terminal_buffer = (unsigned short *)VGA_ADDRESS;
+	// vga_index		= 0;
 
-	// test_print();
+	// // test_print();
 	// print_42();
 }

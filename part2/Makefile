@@ -1,6 +1,6 @@
 # Compilers
 C_COMPILER = gcc
-C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
+C_OPTIONS = -g -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
 ASM_COMPILER = nasm
 ASM_OPTIONS = -f elf32
 
@@ -44,7 +44,7 @@ all: $(ISO_TARGET)
 
 virtualisation: all
 	unset GTK_PATH
-	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -d int,cpu_reset -D qemu.log -serial stdio -S -s
 
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
