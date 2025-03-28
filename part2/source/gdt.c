@@ -1,5 +1,5 @@
 #include "gdt.h"
-
+#include "print_manager.h"
 /*
  To understand the GDT, you need to understand the following:
 	- The GDT is a table of 8-byte entries, that the processor uses to determine what memory
@@ -18,21 +18,21 @@
 	- The base address is a 32-bit value that specifies the starting address of the segment.
 */
 
-// GDT Entries Initialization
+// GDT Entries
 t_gdt_entry gdt_start[7];
 // GDT Descriptor
 t_gdt_ptr gdt_descriptor = {
-    .limit = sizeof(gdt_start) - 1,  // Size of GDT
-    .base = (unsigned int)gdt_start  // Address of first GDT entry
+	.limit = sizeof(gdt_start) - 1,	 // Size of GDT
+	.base  = (unsigned int)gdt_start // Address of first GDT entry
 };
 
 void gdt_set_value(int num, unsigned int base, unsigned int limit, unsigned char access,
-				  unsigned char gran)
+				   unsigned char gran)
 {
-	gdt_start[num].base_low	 = (base & 0xFFFF);
+	gdt_start[num].base_low	   = (base & 0xFFFF);
 	gdt_start[num].base_middle = (base >> 16) & 0xFF;
-	gdt_start[num].base_high	 = (base >> 24) & 0xFF;
-	gdt_start[num].limit_low	 = (limit & 0xFFFF);
+	gdt_start[num].base_high   = (base >> 24) & 0xFF;
+	gdt_start[num].limit_low   = (limit & 0xFFFF);
 	gdt_start[num].granularity = (limit >> 16) & 0x0F;
 	gdt_start[num].granularity |= gran & 0xF0;
 	gdt_start[num].access = access;
@@ -71,4 +71,15 @@ void gdt_install()
 	; // Data segment
 
 	gdt_set_value(6, 0, 0xFFFFFFFF, (unsigned char)GDT_STACK_PL3, 0xCF);
+}
+
+void print_gdt_summary()
+{
+	print_k(KERN_INFO "GDT Summary:\n");
+	for (int i = 0; i < sizeof(gdt_start) / sizeof(t_gdt_entry); i++)
+	{
+		print_k(KERN_INFO "Entry %d: Base=0x%x%x%x Limit=0x%x%x Access=0x%x\n", i,
+			   gdt_start[i].base_high, gdt_start[i].base_middle, gdt_start[i].base_low,
+			   gdt_start[i].granularity & 0x0F, gdt_start[i].limit_low, gdt_start[i].access);
+	}
 }
