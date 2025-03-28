@@ -1,8 +1,5 @@
 #include "gdt.h"
 
-t_gdt_entry gdt[1];
-t_gdt_ptr  *gdt_ptr = ( t_gdt_ptr *)GDT_ADDRESS;
-
 /*
  To understand the GDT, you need to understand the following:
 	- The GDT is a table of 8-byte entries, that the processor uses to determine what memory
@@ -20,24 +17,30 @@ t_gdt_ptr  *gdt_ptr = ( t_gdt_ptr *)GDT_ADDRESS;
 	- The granularity is a set of 8 bits that specify the size of the segment.
 	- The base address is a 32-bit value that specifies the starting address of the segment.
 */
+
+// GDT Entries Initialization
+t_gdt_entry gdt_start[7];
+// GDT Descriptor
+t_gdt_ptr gdt_descriptor = {
+    .limit = sizeof(gdt_start) - 1,  // Size of GDT
+    .base = (unsigned int)gdt_start  // Address of first GDT entry
+};
+
 void gdt_set_value(int num, unsigned int base, unsigned int limit, unsigned char access,
 				  unsigned char gran)
 {
-	gdt[num].base_low	 = (base & 0xFFFF);
-	gdt[num].base_middle = (base >> 16) & 0xFF;
-	gdt[num].base_high	 = (base >> 24) & 0xFF;
-	gdt[num].limit_low	 = (limit & 0xFFFF);
-	gdt[num].granularity = (limit >> 16) & 0x0F;
-	gdt[num].granularity |= gran & 0xF0;
-	gdt[num].access = access;
+	gdt_start[num].base_low	 = (base & 0xFFFF);
+	gdt_start[num].base_middle = (base >> 16) & 0xFF;
+	gdt_start[num].base_high	 = (base >> 24) & 0xFF;
+	gdt_start[num].limit_low	 = (limit & 0xFFFF);
+	gdt_start[num].granularity = (limit >> 16) & 0x0F;
+	gdt_start[num].granularity |= gran & 0xF0;
+	gdt_start[num].access = access;
 }
 
 /*Called my main*/
 void gdt_install()
 {
-	gdt_ptr->limit = (sizeof(t_gdt_entry) * 7) - 1;
-	gdt_ptr->base  = (unsigned int)&gdt;
-
 	// KERNEL PART
 
 	gdt_set_value(0, 0, 0, 0, 0); // Null segment
@@ -68,8 +71,4 @@ void gdt_install()
 	; // Data segment
 
 	gdt_set_value(6, 0, 0xFFFFFFFF, (unsigned char)GDT_STACK_PL3, 0xCF);
-	; // Stack User segment
-
-	/*Flush the old gdt (created by grub.) and install the new one*/
-	gdt_flush(/*(unsigned int)gdt_ptr*/);
 }

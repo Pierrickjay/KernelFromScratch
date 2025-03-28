@@ -44,7 +44,7 @@ all: $(ISO_TARGET)
 
 virtualisation: all
 	unset GTK_PATH
-	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -d int,cpu_reset -D qemu.log -serial stdio -S -s
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -d int,cpu_reset -D qemu.log -serial stdio -monitor pty
 
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub

@@ -85,6 +85,5 @@ typedef struct gdt_ptr
 
 void gdt_install();
 
-extern void gdt_flush(/*unsigned int gdt_ptr*/);
 
 #define null 0, 0, 0, 0
