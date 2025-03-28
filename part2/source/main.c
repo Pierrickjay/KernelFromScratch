@@ -35,32 +35,31 @@ void print_42(void)
 void test_print()
 {
 	int nb = 8;
-	print_string("hello val ca va ? ", YELLOW);
-	print_carriage_return();
-	print_char('D', GREEN);
-	print_carriage_return();
-	print_number(8988, GREEN);
-	print_f("ceci est un int test %d", 123);
-	print_carriage_return();
-	print_f("ceci est un char test %c", 'C');
-	print_carriage_return();
-	int test = print_f("ceci est un string test %s", "frefjreferf");
-	print_number(test, GREEN);
-	print_carriage_return();
+	print_string("hello val ca va ? \n");
+	kfs_write_char(&screen_context,'D');
+	print_f("\n");
+	print_number(8988);
+	print_f("ceci est un int test %d\n", 123);
+	print_f("\n");
+	print_f("ceci est un char test %c\n", 'C');
+	print_f("\n");
+	int test = print_f("ceci est un string test %s\n", "frefjreferf");
+	print_number(test);
+	print_f("\n");
 	// print_f("ceci est un hex test %x", &nb);
-	print_string("Versiwfwfefewfwefewoweewefwefew\n", RED);
+	print_string("Versiwfwfefewfwefewoweewefwefew\n");
 }
 
 void print_k_test()
 {
-	printk(KERN_EMERG "System is about to crash!\n");
-	printk(KERN_ALERT "Immediate action required!\n");
-	printk(KERN_CRIT "Critical condition detected\n");
-	printk(KERN_ERR "An error occurred: %d\n", -1);
-	printk(KERN_WARNING "Warning: low memory\n");
-	printk(KERN_NOTICE "System initialization complete\n");
-	printk(KERN_INFO "Starting process with PID %d\n", 12912);
-	printk(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
+	print_k(KERN_EMERG "System is about to crash!\n");
+	print_k(KERN_ALERT "Immediate action required!\n");
+	print_k(KERN_CRIT "Critical condition detected\n");
+	print_k(KERN_ERR "An error occurred: %d\n", -1);
+	print_k(KERN_WARNING "Warning: low memory\n");
+	print_k(KERN_NOTICE "System initialization complete\n");
+	print_k(KERN_INFO "Starting process with PID %d\n", 12912);
+	print_k(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
 }
 
 void main()
@@ -70,7 +69,9 @@ void main()
 	terminal_buffer = (unsigned short *)VGA_ADDRESS;
 	vga_index		= 0;
 
-	test_print();
-	print_42();
-	print_k_test();
+	// test_print();
+	// print_42();
+	// print_k_test();
+	// clear_screen();
+	print_gdt_summary();
 }

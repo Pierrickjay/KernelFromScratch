@@ -27,30 +27,83 @@ void print_42(void)
 	print_string("               4242\n");
 }
 
+void print_k_test()
+{
+	print_k(KERN_EMERG "System is about to crash!\n");
+	print_k(KERN_ALERT "Immediate action required!\n");
+	print_k(KERN_CRIT "Critical condition detected\n");
+	print_k(KERN_ERR "An error occurred: %d\n", -1);
+	print_k(KERN_WARNING "Warning: low memory\n");
+	print_k(KERN_NOTICE "System initialization complete\n");
+	print_k(KERN_INFO "Starting process with PID %d\n", 12912);
+	print_k(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
+}
+
+void print_test()
+{
+	clear_screen(&screen_context);
+	print_string("hello val ca va ?\n");
+	kfs_write_char(&screen_context, 'D');
+	kfs_write_char(&screen_context, '\n');
+	print_number(8988);
+	kfs_write_char(&screen_context, '\n');
+
+}
+
+void print_f_test()
+{
+	int nb			= 8;
+	clear_screen(&screen_context);
+	print_f("ceci est un int test %d\n", 123);
+	print_f("ceci est un char test %c\n", 'C');
+	int test = print_f("ceci est un string test %s\n", "frefjreferf");
+	// print_f("ceci est un hex test %x", &nb);
+	print_string("Versiwfwfefewfwefewoweewefwefew\n");
+	print_number(test);
+
+	print_42();
+}
+
+// void main()
+// {
+// 	init_screen_context(&screen_context);
+
+// 	int nb = 8;
+// 	print_string("hello val ca va ? \n");
+// 	// clear_screen(&screen_context);
+
+// 	// kfs_write_char(&screen_context, '\n');
+// 	// print_42();
+
+// 	// kfs_write_char(&screen_context, 'a');
+// 	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+// }
+
 void main()
 {
 	init_screen_context(&screen_context);
-
+	
 	int nb = 8;
 	clear_screen(&screen_context);
-	set_color(&screen_context, YELLOW);
-	print_string("hello val ca va ? ");
-	set_color(&screen_context, GREEN);
-	print_f("\nD\n");
-	print_number(8988);
-	set_color(&screen_context, WHITE);
-	print_f("ceci est un int test %d\n", 123);
-	print_f("ceci est un char test %c\n", 'C');
-	int test = print_f("ceci est un string test %s", "frefjreferf");
-	// print_f("ceci est un hex test %x", &nb);
+	kfs_write_colored_char(&screen_context, 'a', BLUE);
 	set_color(&screen_context, RED);
-	print_string("Versiwfwfefewfwefewoweewefwefew\n");
-	set_color(&screen_context, WHITE);
-	print_number(test);
+	print_string("hello val ca va ? ");
+	// set_color(&screen_context, GREEN);
+	// print_f("\nD\n");
+	// print_number(8988);
+	// set_color(&screen_context, WHITE);
+	// print_f("ceci est un int test %d\n", 123);
+	// print_f("ceci est un char test %c\n", 'C');
+	// int test = print_f("ceci est un string test %s", "frefjreferf");
+	// // print_f("ceci est un hex test %x", &nb);
+	// set_color(&screen_context, RED);
+	// print_string("Versiwfwfefewfwefewoweewefwefew\n");
+	// set_color(&screen_context, WHITE);
+	// print_number(test);
 
-	kfs_write_char(&screen_context, '\n');
-	print_42();
+	// kfs_write_char(&screen_context, '\n');
+	// print_42();
 
-	kfs_write_char(&screen_context, 'a');
-	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+	// kfs_write_char(&screen_context, 'a');
+	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 }
