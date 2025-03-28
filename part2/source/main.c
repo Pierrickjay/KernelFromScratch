@@ -51,6 +51,18 @@ void test_print()
 	print_string("Versiwfwfefewfwefewoweewefwefew\n", RED);
 }
 
+void print_k_test()
+{
+	printk(KERN_EMERG "System is about to crash!\n");
+	printk(KERN_ALERT "Immediate action required!\n");
+	printk(KERN_CRIT "Critical condition detected\n");
+	printk(KERN_ERR "An error occurred: %d\n", -1);
+	printk(KERN_WARNING "Warning: low memory\n");
+	printk(KERN_NOTICE "System initialization complete\n");
+	printk(KERN_INFO "Starting process with PID %d\n", 12912);
+	printk(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
+}
+
 void main()
 {
 	clear_screen();
@@ -60,4 +72,5 @@ void main()
 
 	test_print();
 	print_42();
+	print_k_test();
 }

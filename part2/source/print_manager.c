@@ -1,5 +1,20 @@
 #include "print_manager.h"
 
+// Color mapping for different log levels
+unsigned char get_log_color(const char *level) {
+    switch(level[1]) {
+        case '0': return RED;     // EMERG  (most critical)
+        case '1': return RED;     // ALERT 
+        case '2': return RED;     // CRIT 
+        case '3': return YELLOW;  // ERR  Red
+        case '4': return YELLOW;  // WARNING 
+        case '5': return MAGENTA;   // NOTICE 
+        case '6': return MAGENTA;  // INFO
+        case '7': return WHITE;   // DEBUG
+        default:  return WHITE;
+    }
+}
+
 void print_carriage_return(void)
 {
 	vga_index += L_WINDOW - (vga_index % L_WINDOW);
@@ -106,4 +121,63 @@ int print_f(char *str, ...)
 		i++;
 	}
 	return total_print;
+}
+
+int printk(const char *format, ...) {
+    int	*args;
+	int	  i = 0;
+	char  tmp_addr[9];
+
+	args   = (int *)(&format);		// pointer of args
+	format = (char *)(*args++); // Pointer to char in first string
+	i	   = 0;
+    
+    int total_print = 0;
+    unsigned char color = WHITE;
+    
+    // Check if the format starts with a log level
+    if (format[0] == '<' && format[2] == '>') {
+        color = get_log_color(format);
+        format += 3;  // Skip the log level prefix
+    }
+    
+    // Use existing print_f logic with the specified color
+    char *fmt_copy = (char *)format;
+    int *arg_ptr = (int *)(&args);
+    
+    while (*fmt_copy) {
+        if (*fmt_copy == '%') {
+            fmt_copy++;
+            switch (*fmt_copy) {
+                case '%':
+                    print_char('%', color);
+                    total_print++;
+                    break;
+                case 'd':
+                    total_print += print_number(*arg_ptr++, color);
+                    break;
+                case 's':
+                    total_print += print_string(*((char **)arg_ptr++), color);
+                    break;
+                case 'c':
+                    print_char(*arg_ptr++, color);
+                    total_print++;
+                    break;
+                case 'x':
+                    print_hex(*arg_ptr++, color);
+                    total_print++;
+                    break;
+                default:
+                    print_char('%', color);
+                    print_char(*fmt_copy, color);
+                    total_print += 2;
+                    break;
+            }
+        } else {
+            print_char(*fmt_copy, color);
+            total_print++;
+        }
+        fmt_copy++;
+    }
+    return total_print;
 }

@@ -12,5 +12,6 @@ void print_char(char c, unsigned char color);
 void print_carriage_return(void);
 
 int print_f(char *str, ...);
+int printk(const char *format, ...);
 
 #endif
