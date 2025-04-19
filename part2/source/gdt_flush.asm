@@ -32,9 +32,6 @@ gdt_load:
     ret
 
 .error:
-    ; If gdt_ptr is invalid, you might want to:
-    ; 1. Halt the CPU
-    ; 2. Send an error code
-    ; 3. Trigger a breakpoint
+    ; If gdt_ptr is invalid, halt the cpu
     cli
     hlt

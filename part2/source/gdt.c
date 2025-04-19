@@ -73,7 +73,7 @@ void gdt_install()
 	gdt_set_value(6, 0, 0xFFFFFFFF, (unsigned char)GDT_STACK_PL3, 0xCF);
 }
 
-void print_gdt_summary()
+void print_gdt_summary() // ca va pas ici
 {
 	print_k(KERN_INFO "GDT Summary:\n");
 	for (int i = 0; i < sizeof(gdt_start) / sizeof(t_gdt_entry); i++)
