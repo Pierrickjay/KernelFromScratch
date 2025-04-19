@@ -1,6 +1,5 @@
 #include "print_manager.h"
 
-// Color mapping for different log levels
 unsigned char get_log_color(const char *level)
 {
 	switch (level[1])
@@ -47,7 +46,7 @@ int print_number(int nb)
 	return len_nb;
 }
 
-void print_hex(int hex)
+int print_hex(int hex)
 {
 	char base[] = "0123456789abcdef";
 	if (hex > HEX_BASE_SIZE - 1)
@@ -57,7 +56,6 @@ void print_hex(int hex)
 	}
 	kfs_write_char(&screen_context, base[hex]);
 }
-
 
 int print_f(char *str, ...)
 {
@@ -143,6 +141,7 @@ int print_k(const char *format, ...)
 	char *fmt_copy = (char *)format;
 	int	*arg_ptr  = (int *)(&args);
 
+	set_color(&screen_context, color);
 	while (*fmt_copy)
 	{
 		if (*fmt_copy == '%')
@@ -151,26 +150,26 @@ int print_k(const char *format, ...)
 			switch (*fmt_copy)
 			{
 				case '%':
-					kfs_write_char(&screen_context,'%', color);
+					kfs_write_char(&screen_context, '%');
 					total_print++;
 					break;
 				case 'd':
-					total_print += print_number(*arg_ptr++, color);
+					total_print += print_number(*arg_ptr++);
 					break;
 				case 's':
-					total_print += print_string(*((char **)arg_ptr++), color);
+					total_print += print_string(*((char **)arg_ptr++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context,*arg_ptr++, color);
+					kfs_write_char(&screen_context,*arg_ptr++);
 					total_print++;
 					break;
 				case 'x':
-					print_hex(*arg_ptr++, color);
+					print_hex(*arg_ptr++);
 					total_print++;
 					break;
 				default:
-					kfs_write_char(&screen_context,'%', color);
-					kfs_write_char(&screen_context,*fmt_copy, color);
+					kfs_write_char(&screen_context, '%');
+					kfs_write_char(&screen_context,*fmt_copy);
 					total_print += 2;
 					break;
 			}

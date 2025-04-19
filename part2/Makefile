@@ -16,6 +16,8 @@ C_FILES = main.c \
 	memory_manager.c \
 	utils.c \
 	gdt.c \
+	cursor.c \
+	io.c \
 
 ASM_FILES = boot.asm gdt_flush.asm
 

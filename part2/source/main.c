@@ -1,53 +1,31 @@
-#include "gdt.h"
 #include "print_manager.h"
 #include "screen_manager.h"
-
-void next_line(void)
-{
-	vga_index += L_WINDOW - (vga_index % L_WINDOW);
-}
+#include "gdt.h"
 
 void print_42(void)
 {
-	print_string("              42424  42424242424", BG(RED | INTENSIVE) | BLUE);
-	next_line();
-	print_string("           42424     4242  42424", BG(BLUE | INTENSIVE) | GREEN);
-	next_line();
-	print_string("        42424        42    42424", BG(GREEN | INTENSIVE) | RED);
-	next_line();
-	print_string("     42424               42424", BG(CYAN | INTENSIVE) | YELLOW);
-	next_line();
-	print_string("  42424                42424", BG(YELLOW | INTENSIVE) | MAGENTA);
-	next_line();
-	print_string("4242424242424242424  42424    42", BG(MAGENTA | INTENSIVE) | CYAN);
-	next_line();
-	print_string("4242424242424242424  42424  4242", BG(BLUE | INTENSIVE) | GREEN | INTENSIVE);
-	next_line();
-	print_string("               4242  42424242424", BG(WHITE | INTENSIVE) | RED | INTENSIVE);
-	next_line();
-	print_string("               4242", BG(YELLOW | INTENSIVE) | YELLOW | INTENSIVE);
-	next_line();
-	print_string("               4242", BG(GREEN | INTENSIVE) | MAGENTA | INTENSIVE);
-	next_line();
-	print_string("               4242", BG(RED | INTENSIVE) | BLUE | INTENSIVE);
-}
-
-void test_print()
-{
-	int nb = 8;
-	print_string("hello val ca va ? \n");
-	kfs_write_char(&screen_context,'D');
-	print_f("\n");
-	print_number(8988);
-	print_f("ceci est un int test %d\n", 123);
-	print_f("\n");
-	print_f("ceci est un char test %c\n", 'C');
-	print_f("\n");
-	int test = print_f("ceci est un string test %s\n", "frefjreferf");
-	print_number(test);
-	print_f("\n");
-	// print_f("ceci est un hex test %x", &nb);
-	print_string("Versiwfwfefewfwefewoweewefwefew\n");
+	set_color(&screen_context, BG(RED) | BLUE);
+	print_string("              42424  42424242424\n");
+	set_color(&screen_context, BG(BLUE) | GREEN);
+	print_string("           42424     4242  42424\n");
+	set_color(&screen_context, BG(GREEN) | RED);
+	print_string("        42424        42    42424\n");
+	set_color(&screen_context, BG(CYAN) | YELLOW);
+	print_string("     42424               42424\n");
+	set_color(&screen_context, BG(YELLOW) | MAGENTA);
+	print_string("  42424                42424\n");
+	set_color(&screen_context, BG(MAGENTA) | CYAN);
+	print_string("4242424242424242424  42424    42\n");
+	set_color(&screen_context, BG(BLUE) | GREEN | INTENSIVE);
+	print_string("4242424242424242424  42424  4242\n");
+	set_color(&screen_context, BG(WHITE) | RED | INTENSIVE);
+	print_string("               4242  42424242424\n");
+	set_color(&screen_context, BG(YELLOW) | YELLOW | INTENSIVE);
+	print_string("               4242\n");
+	set_color(&screen_context, BG(GREEN) | MAGENTA | INTENSIVE);
+	print_string("               4242\n");
+	set_color(&screen_context, BG(RED) | BLUE | INTENSIVE);
+	print_string("               4242\n");
 }
 
 void print_k_test()
@@ -62,16 +40,42 @@ void print_k_test()
 	print_k(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
 }
 
+void print_test()
+{
+	// clear_screen(&screen_context);
+	print_string("hello val ca va ?\n");
+	kfs_write_char(&screen_context, 'D');
+	kfs_write_char(&screen_context, '\n');
+	print_number(8988);
+	kfs_write_char(&screen_context, '\n');
+}
+
+void print_f_test()
+{
+	int nb			= 8;
+	// clear_screen(&screen_context);
+	print_f("ceci est un int test %d\n", 123);
+	print_f("ceci est un char test %c\n", 'C');
+	int test = print_f("ceci est un string test %s\n", "frefjreferf");
+	print_f("ceci est un hex test %x\n", &nb);
+	print_string("Versiwfwfefewfwefewoweewefwefew\n");
+	print_number(test);
+}
+
 void main()
 {
-	clear_screen();
+	gdt_install();
+	init_screen_context(&screen_context);
 
-	terminal_buffer = (unsigned short *)VGA_ADDRESS;
-	vga_index		= 0;
-
-	// test_print();
+	int nb = 8;
+	// clear_screen(&screen_context);
+	set_color(&screen_context, BG(BLACK) | WHITE);
+	print_test();
+	print_k_test();
+	print_f_test();
 	// print_42();
-	// print_k_test();
-	// clear_screen();
-	print_gdt_summary();
+
+	// kfs_write_char(&screen_context, 'a');
+	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+	// print_gdt_summary();
 }
