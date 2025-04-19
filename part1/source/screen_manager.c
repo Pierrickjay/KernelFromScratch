@@ -1,6 +1,7 @@
 
 #include "screen_manager.h"
 #include "memory_manager.h"
+#include "print_manager.h"
 
 t_screen_context screen_context;
 
@@ -23,7 +24,10 @@ void init_screen_context(t_screen_context *ctx)
 void set_char_cell(t_screen_context *ctx, const t_position *pos, t_character_cell cell)
 {
 	if (pos->x >= L_WINDOW || pos->y >= H_WINDOW)
-		return; // @TODO printk("ERROR: cell out of bounds\n");
+	{
+		print_k(KERN_ERR "ERROR: cell out of bounds\n");	
+		return;
+	}
 
 	// Save the character and color in the cell
 	ctx->desktops[ctx->desktop_index].cells[pos->x][pos->y] = cell;

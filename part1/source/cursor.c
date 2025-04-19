@@ -1,6 +1,7 @@
 #include "cursor.h"
 #include "io.h"
 #include "screen_manager.h"
+#include "print_manager.h"
 
 void enable_cursor(u8 cursor_start, u8 cursor_end)
 {
@@ -68,7 +69,10 @@ void increment_cursor(t_cursor *cursor)
 void set_cursor(t_cursor *cursor, t_position pos)
 {
 	if (pos.x >= L_WINDOW || pos.y >= H_WINDOW)
-		return; // @TODO printk("ERROR: cursor out of bounds\n");
+	{
+		print_k(KERN_ERR "ERROR: cell out of bounds\n");
+		return;
+	}
 	*cursor = pos;
 	update_hardware_cursor(cursor);
 }
