@@ -1,6 +1,7 @@
 
 #include "utils.h"
 #include "memory_manager.h"
+#include "screen_manager.h"
 
 void init_position(t_position *pos)
 {
@@ -52,4 +53,29 @@ int intlen(int n)
 		i++;
 	}
 	return (i);
+}
+
+unsigned char get_log_color(const char *level)
+{
+	switch (level[1])
+	{
+		case '0':
+			return RED; // EMERG  (most critical)
+		case '1':
+			return RED; // ALERT
+		case '2':
+			return RED; // CRIT
+		case '3':
+			return YELLOW; // ERR  Red
+		case '4':
+			return YELLOW; // WARNING
+		case '5':
+			return MAGENTA; // NOTICE
+		case '6':
+			return MAGENTA; // INFO
+		case '7':
+			return WHITE; // DEBUG
+		default:
+			return WHITE;
+	}
 }

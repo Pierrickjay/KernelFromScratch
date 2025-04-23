@@ -1,29 +1,6 @@
 #include "print_manager.h"
-
-unsigned char get_log_color(const char *level)
-{
-	switch (level[1])
-	{
-		case '0':
-			return RED; // EMERG  (most critical)
-		case '1':
-			return RED; // ALERT
-		case '2':
-			return RED; // CRIT
-		case '3':
-			return YELLOW; // ERR  Red
-		case '4':
-			return YELLOW; // WARNING
-		case '5':
-			return MAGENTA; // NOTICE
-		case '6':
-			return MAGENTA; // INFO
-		case '7':
-			return WHITE; // DEBUG
-		default:
-			return WHITE;
-	}
-}
+#include "utils.h"
+#include "gdt.h"
 
 int print_string(char *str)
 {
@@ -183,3 +160,19 @@ int print_k(const char *format, ...)
 	}
 	return total_print;
 }
+
+void print_kernel_stack(int num_entries) {
+    unsigned int *esp;
+    unsigned int i;
+    
+    // Get the current stack pointer
+    asm volatile("mov %%esp, %0" : "=r"(esp));
+    
+    print_k(KERN_INFO "Kernel Stack Dump (ESP = 0x%x):\n", (unsigned int)esp);
+    
+    // Print stack entries (memory above ESP)
+    for (i = 0; i < num_entries; i++) {
+        print_k(KERN_INFO "Stack[%d] = 0x%x\n", i, esp[i]);
+    }
+}
+

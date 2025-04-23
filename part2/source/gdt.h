@@ -3,6 +3,7 @@
 // much information was taken from
 // http://www.osdever.net/bkerndev/Docs/gdt.htm
 
+#define GDT_SIZE 7 // Number of GDT entries
 #define GDT_ADDRESS 0x00000800
 
 #define SEG_DESCTYPE(x) ((x) << 0x04)	 // Descriptor type (0 for system, 1 for code/data)
@@ -83,7 +84,8 @@ typedef struct gdt_ptr
 	unsigned int   base;  // The address of the first gdt_entry_t struct.
 } __attribute__((packed)) t_gdt_ptr;
 
+extern t_gdt_entry gdt_start[GDT_SIZE];
+
 void gdt_install();
-void print_gdt_summary();
 
 #define null 0, 0, 0, 0

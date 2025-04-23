@@ -19,7 +19,7 @@
 */
 
 // GDT Entries
-t_gdt_entry gdt_start[7];
+t_gdt_entry gdt_start[GDT_SIZE];
 // GDT Descriptor
 t_gdt_ptr gdt_descriptor = {
 	.limit = sizeof(gdt_start) - 1,	 // Size of GDT
@@ -71,15 +71,4 @@ void gdt_install()
 	; // Data segment
 
 	gdt_set_value(6, 0, 0xFFFFFFFF, (unsigned char)GDT_STACK_PL3, 0xCF);
-}
-
-void print_gdt_summary() // ca va pas ici
-{
-	print_k(KERN_INFO "GDT Summary:\n");
-	for (int i = 0; i < sizeof(gdt_start) / sizeof(t_gdt_entry); i++)
-	{
-		print_k(KERN_INFO "Entry %d: Base=0x%x%x%x Limit=0x%x%x Access=0x%x\n", i,
-			   gdt_start[i].base_high, gdt_start[i].base_middle, gdt_start[i].base_low,
-			   gdt_start[i].granularity & 0x0F, gdt_start[i].limit_low, gdt_start[i].access);
-	}
 }
