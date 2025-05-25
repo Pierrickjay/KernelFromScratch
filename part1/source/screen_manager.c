@@ -16,8 +16,7 @@ void init_screen_context(t_screen_context *ctx)
 	ctx->vga_buffer	   = (unsigned char *)VGA_ADDRESS;
 	ctx->desktop_index = 0;
 	ctx->color		   = BG(BLACK) | WHITE;
-	for (int index = 0; index < DESKTOP_COUNT; index++)
-	{
+	for (int index = 0; index < DESKTOP_COUNT; index++) {
 		init_desktop(&ctx->desktops[index]);
 	}
 }
@@ -45,8 +44,7 @@ void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned cha
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
 	t_cursor  *cursor  = &desktop->cursor;
 
-	switch (c)
-	{
+	switch (c) {
 		case '\n':
 			// @TODO clear rest of line
 			set_cursor_on_next_line(cursor);
@@ -71,8 +69,7 @@ void kfs_write_char(t_screen_context *ctx, unsigned char c)
 void clear_screen_colored(t_screen_context *ctx, unsigned char color)
 {
 	set_cursor(&ctx->desktops[ctx->desktop_index].cursor, (t_position){0, 0});
-	for (int index = 0; index < SCREEN_CELLS_SIZE; index++)
-	{
+	for (int index = 0; index < SCREEN_CELLS_SIZE; index++) {
 		kfs_write_colored_char(ctx, ' ', color);
 	}
 }

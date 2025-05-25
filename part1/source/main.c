@@ -97,8 +97,7 @@ void main()
 	kfs_write_char(&screen_context, 'a');
 	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 
-	while (1)
-	{
+	while (1) {
 		// asm volatile("hlt");
 	}
 }

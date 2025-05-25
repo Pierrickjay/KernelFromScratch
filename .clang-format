@@ -1,10 +1,16 @@
 UseTab: Always
 IndentWidth: 4
 TabWidth: 4
-BreakBeforeBraces: Allman
+BreakBeforeBraces: Custom
 IndentCaseLabels: true
 ColumnLimit: 100
 AlignAfterOpenBracket: Align
+BraceWrapping:
+  AfterFunction: true
+  AfterControlStatement: false
+  BeforeElse: true
+  BeforeCatch: false
+  BeforeWhile: false
 AllowShortBlocksOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
 AllowShortIfStatementsOnASingleLine: false

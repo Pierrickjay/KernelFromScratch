@@ -48,8 +48,7 @@ void set_cursor_on_next_line(t_cursor *cursor)
 void increment_cursor_by(t_cursor *cursor, int nb)
 {
 	unsigned int new_x = cursor->x + nb;
-	if (new_x >= L_WINDOW)
-	{
+	if (new_x >= L_WINDOW) {
 		set_cursor_on_next_line(cursor);
 		cursor->x = new_x % L_WINDOW;
 	}
@@ -59,8 +58,7 @@ void increment_cursor_by(t_cursor *cursor, int nb)
 void increment_cursor(t_cursor *cursor)
 {
 	cursor->x++;
-	if (cursor->x >= L_WINDOW)
-	{
+	if (cursor->x >= L_WINDOW) {
 		set_cursor_on_next_line(cursor);
 	}
 	update_hardware_cursor(cursor);

@@ -39,24 +39,21 @@
 
 #define SCREEN_BUFFER_SIZE (H_WINDOW * L_WINDOW * 2)
 
-typedef struct s_character_cell
-{
+typedef struct s_character_cell {
 	unsigned char color;	 // private
 	unsigned char character; // private
 } t_character_cell;
 
 #define SCREEN_CELLS_SIZE (L_WINDOW * H_WINDOW)
 
-typedef struct s_desktop
-{
+typedef struct s_desktop {
 	t_cursor		 cursor;					// private
 	t_character_cell cells[L_WINDOW][H_WINDOW]; // private
 } t_desktop;
 
 #define DESKTOP_COUNT 4
 
-typedef struct s_screen_context
-{
+typedef struct s_screen_context {
 	t_desktop	   desktops[DESKTOP_COUNT]; // private
 	unsigned int   desktop_index;			// private
 	unsigned char *vga_buffer;				// private

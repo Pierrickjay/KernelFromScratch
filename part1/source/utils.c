@@ -17,18 +17,15 @@ void itoa(int n, char *str)
 	nb	= n;
 	len = intlen(n);
 	ft_memset(str, 0, len + 1);
-	if (nb < 0)
-	{
+	if (nb < 0) {
 		nb = -nb;
 	}
 	i = len - 1;
-	if (nb == 0)
-	{
+	if (nb == 0) {
 		str[i] = '0';
 		return;
 	}
-	while (nb != 0)
-	{
+	while (nb != 0) {
 		str[i--] = (nb % 10) + '0';
 		nb		 = nb / 10;
 	}
@@ -41,13 +38,11 @@ int intlen(int n)
 	int i;
 
 	i = 1;
-	if (n < 0)
-	{
+	if (n < 0) {
 		n = -n;
 		i++;
 	}
-	while (n >= 10)
-	{
+	while (n >= 10) {
 		n = n / 10;
 		i++;
 	}
