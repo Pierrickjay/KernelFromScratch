@@ -1,4 +1,7 @@
+#include "char_stacked_queue.h"
 #include "interrupts.h"
+#include "keyboard_input.h"
+#include "keyboard_interrupts.h"
 #include "print_manager.h"
 #include "screen_manager.h"
 
@@ -69,6 +72,7 @@ void main()
 {
 	init_screen_context(&screen_context);
 	init_interrupts();
+	queue_init(&keyboard_queue);
 
 	int nb = 8;
 	clear_screen(&screen_context);
@@ -98,6 +102,7 @@ void main()
 	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 
 	while (1) {
-		// asm volatile("hlt");
+		handle_keyboard_input(&keyboard_queue);
+		asm volatile("hlt");
 	}
 }
