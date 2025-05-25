@@ -8,8 +8,7 @@ void *ft_memset(void *s, int c, int n)
 
 	i	= 0;
 	str = s;
-	while (i < n)
-	{
+	while (i < n) {
 		str[i] = (unsigned char)c;
 		i++;
 	}
