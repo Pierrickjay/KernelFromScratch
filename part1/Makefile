@@ -18,7 +18,10 @@ C_FILES = main.c \
 	io.c \
 	utils.c \
 	interrupts.c \
-	keyboard_interrupts.c
+	keyboard_interrupts.c \
+	char_stacked_queue.c \
+	keyboard_input.c \
+	keyboard_map.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm
