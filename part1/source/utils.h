@@ -3,8 +3,7 @@
 
 #include <stddef.h>
 
-typedef struct s_position
-{
+typedef struct s_position {
 	unsigned int x;
 	unsigned int y;
 } t_position;

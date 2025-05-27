@@ -3,8 +3,7 @@
 int print_string(char *str)
 {
 	int index = 0;
-	while (str[index])
-	{
+	while (str[index]) {
 		kfs_write_char(&screen_context, str[index]);
 		index++;
 	}
@@ -24,8 +23,7 @@ int print_number(int nb)
 void print_hex(int hex)
 {
 	char base[] = "0123456789abcdef";
-	if (hex > HEX_BASE_SIZE - 1)
-	{
+	if (hex > HEX_BASE_SIZE - 1) {
 		print_hex(hex / HEX_BASE_SIZE);
 		hex %= HEX_BASE_SIZE;
 	}
@@ -43,10 +41,8 @@ int print_f(char *str, ...)
 	args   = (int *)(&str);		// pointer of args
 	format = (char *)(*args++); // Pointer to char in first string
 	i	   = 0;
-	while (format[i])
-	{
-		if (format[i] == '%')
-		{
+	while (format[i]) {
+		if (format[i] == '%') {
 			if (format[i + 1] == '\0') // Si % est le dernier caractère
 			{
 				kfs_write_char(&screen_context, '%');
@@ -54,8 +50,7 @@ int print_f(char *str, ...)
 				break;
 			}
 			i++;
-			switch (format[i])
-			{
+			switch (format[i]) {
 				case '%': // Gestion de %%
 					kfs_write_char(&screen_context, '%');
 					total_print++;
@@ -82,8 +77,7 @@ int print_f(char *str, ...)
 					break;
 			}
 		}
-		else
-		{
+		else {
 			kfs_write_char(&screen_context, format[i]);
 			total_print++;
 		}
