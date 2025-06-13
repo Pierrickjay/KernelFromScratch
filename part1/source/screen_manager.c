@@ -23,9 +23,8 @@ void init_screen_context(t_screen_context *ctx)
 
 void set_char_cell(t_screen_context *ctx, const t_position *pos, t_character_cell cell)
 {
-	if (pos->x >= L_WINDOW || pos->y >= H_WINDOW)
-	{
-		print_k(KERN_ERR "ERROR: cell out of bounds\n");	
+	if (pos->x >= L_SCREEN || pos->y >= H_SCREEN) {
+		print_k(KERN_ERR "ERROR: cell out of bounds\n");
 		return;
 	}
 
@@ -33,7 +32,7 @@ void set_char_cell(t_screen_context *ctx, const t_position *pos, t_character_cel
 	ctx->desktops[ctx->desktop_index].cells[pos->x][pos->y] = cell;
 
 	// Display the character on the screen
-	unsigned long vga_index = (pos->y * L_WINDOW + pos->x) * 2;
+	unsigned long vga_index = (pos->y * L_SCREEN + pos->x) * 2;
 
 	ctx->vga_buffer[vga_index]	   = cell.character;
 	ctx->vga_buffer[vga_index + 1] = cell.color;
