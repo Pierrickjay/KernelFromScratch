@@ -69,6 +69,7 @@ void init_screen_context(t_screen_context *ctx);
 // Main functions
 void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned char color);
 void kfs_write_char(t_screen_context *ctx, unsigned char c);
+void kfs_clear_cursor_cell(t_screen_context *ctx);
 void clear_screen(t_screen_context *ctx);
 
 // Utility functions
