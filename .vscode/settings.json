@@ -39,7 +39,8 @@
 		"streambuf": "c",
 		"cstdint": "c",
 		"types.h": "c",
-		"cursor.h": "c"
+		"cursor.h": "c",
+		"ranges": "c"
 	},
 	"editor.tabSize": 4,
 	"prettier.useTabs": true,
