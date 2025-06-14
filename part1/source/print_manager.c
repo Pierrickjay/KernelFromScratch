@@ -1,5 +1,7 @@
 #include "print_manager.h"
 
+static const char HEX_DIGITS[] = "0123456789abcdef";
+
 unsigned char get_log_color(const char *level)
 {
 	switch (level[1])
@@ -48,13 +50,12 @@ int print_number(int nb)
 
 void print_hex(int hex)
 {
-	char *base = "0123456789abcdef";
 	if (hex > HEX_BASE_SIZE - 1)
 	{
 		print_hex(hex / HEX_BASE_SIZE);
 		hex %= HEX_BASE_SIZE;
 	}
-	kfs_write_char(&screen_context, base[hex]);
+	kfs_write_char(&screen_context, HEX_DIGITS[hex]);
 }
 
 int print_f(char *str, ...)
