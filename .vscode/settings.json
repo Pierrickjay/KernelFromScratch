@@ -40,7 +40,8 @@
 		"cstdint": "c",
 		"types.h": "c",
 		"cursor.h": "c",
-		"ranges": "c"
+		"ranges": "c",
+		"interrupts.h": "c"
 	},
 	"editor.tabSize": 4,
 	"prettier.useTabs": true,

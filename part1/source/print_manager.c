@@ -4,8 +4,7 @@ static const char HEX_DIGITS[] = "0123456789abcdef";
 
 unsigned char get_log_color(const char *level)
 {
-	switch (level[1])
-	{
+	switch (level[1]) {
 		case '0':
 			return RED; // EMERG  (most critical)
 		case '1':
@@ -30,8 +29,7 @@ unsigned char get_log_color(const char *level)
 int print_string(char *str)
 {
 	int index = 0;
-	while (str[index])
-	{
+	while (str[index]) {
 		kfs_write_char(&screen_context, str[index]);
 		index++;
 	}
@@ -50,8 +48,7 @@ int print_number(int nb)
 
 void print_hex(int hex)
 {
-	if (hex > HEX_BASE_SIZE - 1)
-	{
+	if (hex > HEX_BASE_SIZE - 1) {
 		print_hex(hex / HEX_BASE_SIZE);
 		hex %= HEX_BASE_SIZE;
 	}
@@ -69,10 +66,8 @@ int print_f(char *str, ...)
 	args   = (int *)(&str);		// pointer of args
 	format = (char *)(*args++); // Pointer to char in first string
 	i	   = 0;
-	while (format[i])
-	{
-		if (format[i] == '%')
-		{
+	while (format[i]) {
+		if (format[i] == '%') {
 			if (format[i + 1] == '\0') // Si % est le dernier caractère
 			{
 				kfs_write_char(&screen_context, '%');
@@ -80,8 +75,7 @@ int print_f(char *str, ...)
 				break;
 			}
 			i++;
-			switch (format[i])
-			{
+			switch (format[i]) {
 				case '%': // Gestion de %%
 					kfs_write_char(&screen_context, '%');
 					total_print++;
@@ -108,8 +102,7 @@ int print_f(char *str, ...)
 					break;
 			}
 		}
-		else
-		{
+		else {
 			kfs_write_char(&screen_context, format[i]);
 			total_print++;
 		}
@@ -132,8 +125,7 @@ int print_k(const char *format, ...)
 	unsigned char color		  = WHITE;
 
 	// Check if the format starts with a log level
-	if (format[0] == '<' && format[2] == '>')
-	{
+	if (format[0] == '<' && format[2] == '>') {
 		color = get_log_color(format);
 		format += 3; // Skip the log level prefix
 	}
@@ -143,13 +135,10 @@ int print_k(const char *format, ...)
 	int	 *arg_ptr  = (int *)(&args);
 
 	set_color(&screen_context, color);
-	while (*fmt_copy)
-	{
-		if (*fmt_copy == '%')
-		{
+	while (*fmt_copy) {
+		if (*fmt_copy == '%') {
 			fmt_copy++;
-			switch (*fmt_copy)
-			{
+			switch (*fmt_copy) {
 				case '%':
 					kfs_write_char(&screen_context, '%');
 					total_print++;
@@ -175,8 +164,7 @@ int print_k(const char *format, ...)
 					break;
 			}
 		}
-		else
-		{
+		else {
 			kfs_write_char(&screen_context, *fmt_copy);
 			total_print++;
 		}
