@@ -5,6 +5,7 @@
 static u8 special_keys		  = 0;
 static u8 left_shift_pressed  = 0;
 static u8 right_shift_pressed = 0;
+static u8 input_mode		  = INPUT_MODE_DISABLED;
 
 static int handle_special_key(unsigned char scancode)
 {
@@ -43,13 +44,33 @@ void handle_keyboard_inputs(t_char_stacked_queue *queue)
 	while (!queue_is_empty(queue)) {
 		unsigned char scancode = queue_pop(queue);
 
-		if (handle_special_key(scancode)) {
-			return;
+		if (input_mode == INPUT_MODE_DISABLED) {
+			continue;
 		}
 
-		char c = scancode_to_char(scancode, special_keys);
-		if (c) {
-			kfs_write_char(&screen_context, c);
+		if (input_mode == INPUT_MODE_NORMAL) {
+			if (handle_special_key(scancode)) {
+				return;
+			}
+
+			char c = scancode_to_char(scancode, special_keys);
+			if (c) {
+				kfs_write_char(&screen_context, c);
+				kfs_clear_cursor_cell(&screen_context);
+			}
 		}
 	}
+}
+
+void set_input_mode(u8 mode)
+{
+	if (mode == INPUT_MODE_NORMAL) {
+		kfs_clear_cursor_cell(&screen_context);
+	}
+	input_mode = mode;
+}
+
+char get_input_mode(void)
+{
+	return input_mode;
 }

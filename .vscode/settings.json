@@ -41,7 +41,8 @@
 		"types.h": "c",
 		"cursor.h": "c",
 		"ranges": "c",
-		"interrupts.h": "c"
+		"interrupts.h": "c",
+		"memory_manager.h": "c"
 	},
 	"editor.tabSize": 4,
 	"prettier.useTabs": true,
