@@ -51,7 +51,8 @@ void print_test()
 
 void print_f_test()
 {
-	int nb			= 8;
+	int nb = 8;
+
 	clear_screen(&screen_context);
 	print_f("ceci est un int test %d\n", 123);
 	print_f("ceci est un char test %c\n", 'C');

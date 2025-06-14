@@ -48,7 +48,7 @@ int print_number(int nb)
 
 void print_hex(int hex)
 {
-	char base[] = "0123456789abcdef";
+	char *base = "0123456789abcdef";
 	if (hex > HEX_BASE_SIZE - 1)
 	{
 		print_hex(hex / HEX_BASE_SIZE);
@@ -139,7 +139,7 @@ int print_k(const char *format, ...)
 
 	// Use existing print_f logic with the specified color
 	char *fmt_copy = (char *)format;
-	int	*arg_ptr  = (int *)(&args);
+	int	 *arg_ptr  = (int *)(&args);
 
 	set_color(&screen_context, color);
 	while (*fmt_copy)
@@ -160,7 +160,7 @@ int print_k(const char *format, ...)
 					total_print += print_string(*((char **)arg_ptr++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context,*arg_ptr++);
+					kfs_write_char(&screen_context, *arg_ptr++);
 					total_print++;
 					break;
 				case 'x':
@@ -169,18 +169,17 @@ int print_k(const char *format, ...)
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
-					kfs_write_char(&screen_context,*fmt_copy);
+					kfs_write_char(&screen_context, *fmt_copy);
 					total_print += 2;
 					break;
 			}
 		}
 		else
 		{
-			kfs_write_char(&screen_context,*fmt_copy);
+			kfs_write_char(&screen_context, *fmt_copy);
 			total_print++;
 		}
 		fmt_copy++;
 	}
 	return total_print;
 }
-
