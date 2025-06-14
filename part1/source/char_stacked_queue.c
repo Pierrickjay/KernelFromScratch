@@ -44,8 +44,3 @@ int queue_is_empty(t_char_stacked_queue *queue)
 {
 	return queue->front == queue->rear;
 }
-
-// @TODO (si tu lis ça dans la PR, il ne faut pas l'accepter mdr) :
-// - En spammant à un moment ça décale
-// - Gérer les inputs spéciaux comme alt, ctrl etc.. en plus de shift donc penser à un truc global.
-//     Même pour les répétitions aussi c'est bien

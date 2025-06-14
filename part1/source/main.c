@@ -102,7 +102,7 @@ void main()
 	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 
 	while (1) {
-		handle_keyboard_input(&keyboard_queue);
+		handle_keyboard_inputs(&keyboard_queue);
 		asm volatile("hlt");
 	}
 }

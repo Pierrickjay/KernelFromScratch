@@ -38,9 +38,9 @@ static int handle_special_key(unsigned char scancode)
 	return 0;
 }
 
-void handle_keyboard_input(t_char_stacked_queue *queue)
+void handle_keyboard_inputs(t_char_stacked_queue *queue)
 {
-	if (!queue_is_empty(queue)) {
+	while (!queue_is_empty(queue)) {
 		unsigned char scancode = queue_pop(queue);
 
 		if (handle_special_key(scancode)) {
