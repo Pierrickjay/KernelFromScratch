@@ -68,6 +68,12 @@ void print_f_test()
 	print_number(test);
 }
 
+static void kernel_tick(void)
+{
+	handle_keyboard_inputs(&keyboard_queue);
+	asm volatile("hlt");
+}
+
 void main()
 {
 	init_screen_context(&screen_context);
@@ -102,7 +108,6 @@ void main()
 	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 
 	while (1) {
-		handle_keyboard_inputs(&keyboard_queue);
-		asm volatile("hlt");
+		kernel_tick();
 	}
 }
