@@ -57,12 +57,17 @@ void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned cha
 			increment_cursor(cursor);
 			break;
 	}
-	set_char_cell(ctx, cursor, (t_character_cell){color, ' '});
 }
 
 void kfs_write_char(t_screen_context *ctx, unsigned char c)
 {
 	kfs_write_colored_char(ctx, c, ctx->color);
+}
+
+void kfs_clear_cursor_cell(t_screen_context *ctx)
+{
+	set_char_cell(ctx, &ctx->desktops[ctx->desktop_index].cursor,
+				  (t_character_cell){ctx->color, ' '});
 }
 
 void clear_screen_colored(t_screen_context *ctx, unsigned char color)
