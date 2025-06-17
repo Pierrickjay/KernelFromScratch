@@ -39,19 +39,24 @@ void update_hardware_cursor(t_cursor *cursor)
 	move_cursor(cursor->y * L_SCREEN + cursor->x);
 }
 
+void set_cursor_on_upper_line(t_cursor *cursor)
+{
+	if (cursor->y == 0) {
+		cursor->x = 0; // Stay at the beginning if already at the top
+	}
+	else {
+		cursor->x = 0;
+		cursor->y--;
+	}
+	update_hardware_cursor(cursor);
+}
+
 void set_cursor_on_next_line(t_cursor *cursor)
 {
 	
 	if (cursor->y == H_SCREEN - 1) {
-		// If we reach the last line, scroll the screen
-		// print_k(KERN_DEBUG "Scrolling screen\n");
-		// cursor->x = 0;
-		//  cursor->y = 0; // Reset cursor to the top
-		// print_k(KERN_DEBUG "(%d, %d)\n", cursor->x, cursor->y);
 		scroll_screen(&screen_context);
 		cursor->x = 0;
-		// print_k_serial(KERN_DEBUG "Cursor moved to next line: (%d, %d)\n", cursor->x, cursor->y);
-		// cursor->y = H_SCREEN - 1; // Keep cursor on the last line after
 	}
 	else {
 		cursor->x = 0;
@@ -70,6 +75,34 @@ void increment_cursor_by(t_cursor *cursor, int nb)
 	update_hardware_cursor(cursor);
 }
 
+void decrement_cursor(t_cursor *cursor)
+{
+	if (cursor->x == 0) {
+		return; // Do not decrement if already at the beginning of the line
+	}
+	else {
+		cursor->x--;
+	}
+	update_hardware_cursor(cursor);
+}
+
+void decrement_cursor_by(t_cursor *cursor, int nb)
+{
+	if (cursor->x < nb) {
+		if (cursor->y > 0) {
+			cursor->y--;
+			cursor->x = L_SCREEN - (nb - cursor->x);
+		}
+		else {
+			cursor->x = 0; // Stay at the beginning if already at the top
+		}
+	}
+	else {
+		cursor->x -= nb;
+	}
+	update_hardware_cursor(cursor);
+}
+
 void increment_cursor(t_cursor *cursor)
 {
 	cursor->x++;
@@ -82,7 +115,6 @@ void increment_cursor(t_cursor *cursor)
 void set_cursor(t_cursor *cursor, t_position pos)
 {
 	if (pos.x >= L_SCREEN || pos.y >= H_SCREEN) {
-		print_k_serial(KERN_ERR "ERROR: cursor position out of bounds (%d, %d)\n", pos.x, pos.y);
 		print_k(KERN_ERR "ERROR: cell out of bounds\n");
 		return;
 	}

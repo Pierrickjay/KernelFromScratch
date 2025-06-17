@@ -13,6 +13,6 @@ int print_f(char *str, ...);
 int print_k(const char *format, ...);
 
 //Debug function to print to serial port
-void print_k_serial(const char *format, ...);
+void print_serial(char *str, ...);
 
 #endif

@@ -14,26 +14,16 @@ static void kernel_tick(void)
 
 void main()
 {
-	print_k(KERN_INFO "=== Kernel Starting ===\n");
 	
-	print_k(KERN_INFO "Initializing serial port\n");
 	serial_init(SERIAL_COM1_BASE);
-	
-	print_k(KERN_INFO "Initializing screen context\n");
 	init_screen_context(&screen_context);
-	
-	print_k(KERN_INFO "Initializing interrupts\n");
 	init_interrupts();
-	
-	print_k(KERN_INFO "Initializing keyboard queue\n");
 	queue_init(&keyboard_queue);
 
 	main_tests();
 
-	print_k(KERN_INFO "Setting input mode\n");
 	set_input_mode(INPUT_MODE_NORMAL);
 
-	print_k(KERN_INFO "Entering main loop\n");
 	while (1) {
 		kernel_tick();
 	}

@@ -176,55 +176,43 @@ int print_k(const char *format, ...)
 	return total_print;
 }
 
-void print_k_serial(const char *format, ...)
+void print_serial(char *str, ...)
 {
-	int *args;
-	int	 i = 0;
-	char tmp_addr[9];
+	int	 *args;
+	char *format;
+	int	  i = 0;
+	char  tmp_addr[9];
 
-	args   = (int *)(&format);	// pointer of args
+	args   = (int *)(&str);		// pointer of args
 	format = (char *)(*args++); // Pointer to char in first string
 	i	   = 0;
 
-	unsigned char color		  = WHITE;
-
-	// Check if the format starts with a log level
-	if (format[0] == '<' && format[2] == '>') {
-		color = get_log_color(format);
-		format += 3; // Skip the log level prefix
-	}
-
-	// Use existing print_f logic with the specified color
-	char *fmt_copy = (char *)format;
-	int	 *arg_ptr  = (int *)(&args);
-
-	set_color(&screen_context, color);
-	while (*fmt_copy) {
-		if (*fmt_copy == '%') {
-			fmt_copy++;
-			switch (*fmt_copy) {
+	while (*format) {
+		if (*format == '%') {
+			format++;
+			switch (*format) {
 				case '%':
 					serial_write_char(SERIAL_COM1_BASE, '%');
 					break;
 				case 'd':
-					serial_print_number(SERIAL_COM1_BASE, *arg_ptr++);
+					serial_print_number(SERIAL_COM1_BASE, *args++);
 					break;
 				case 's':
-					serial_write_string(SERIAL_COM1_BASE, *((char **)arg_ptr++));
+					serial_write_string(SERIAL_COM1_BASE, *((char **)args++));
 					break;
 				case 'c':
-					serial_write_char(SERIAL_COM1_BASE, *arg_ptr);
-					arg_ptr++;					
+					serial_write_char(SERIAL_COM1_BASE, *args);
+					args++;					
 					break;
 				default:
 					serial_write_char(SERIAL_COM1_BASE, '%');
-					serial_write_char(SERIAL_COM1_BASE, *fmt_copy);
+					serial_write_char(SERIAL_COM1_BASE, *format);
 					break;
 			}
 		}
 		else {
-			serial_write_char(SERIAL_COM1_BASE, *fmt_copy);			
+			serial_write_char(SERIAL_COM1_BASE, *format);			
 		}
-		fmt_copy++;
+		format++;
 	}
 }

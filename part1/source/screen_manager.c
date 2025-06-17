@@ -94,7 +94,6 @@ void set_color(t_screen_context *ctx, unsigned char color)
 
 void scroll_screen(t_screen_context *ctx)
 {
-	print_k_serial(KERN_DEBUG "Scrolling screen\n");
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
 	
 	// Move all lines up by one
