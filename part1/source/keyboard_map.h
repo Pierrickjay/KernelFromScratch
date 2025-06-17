@@ -2,6 +2,10 @@
 #define KEYBOARD_MAP_H
 
 #include "types.h"
+#define LEFT_ARROW 0x4B
+#define RIGHT_ARROW 0x4D
+#define UP_ARROW 0x48
+#define DOWN_ARROW 0x50
 
 // États des touches spéciales
 #define SHIFT_PRESSED 0x1
