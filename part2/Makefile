@@ -23,7 +23,8 @@ C_FILES = main.c \
 	keyboard_input.c \
 	keyboard_map.c \
 	tests.c \
-	serial.c
+	serial.c \
+	gdt.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm \
