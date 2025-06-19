@@ -1,37 +1,34 @@
+
 bits 32
 
-section .multiboot               ;according to multiboot spec
-        dd 0x1BADB002            ; Magic number (permet au BIOS de reconnaître le kernel)
-        dd 0x0                   ; Flags
-        dd - (0x1BADB002 + 0x0)  ; Checksum (pour vérifier l'intégrité)
+section .multiboot
+    dd 0x1BADB002            ; Magic number
+    dd 0x00000001            ; Flags (memory info)
+    dd -(0x1BADB002 + 0x00000001)  ; Checksum
 
 section .text
 global start
-extern main                      ;defined in the C file
+extern main
+extern gdt_load
+
+extern gdt_install
 
 start:
-        cli                      ;block interrupts
-        lgdt [gdt_descriptor]
+    ; Ensure stack is set up before any function calls
+    mov esp, stack_space
 
-        mov ax, 0x10        ; Segment DATA kernel
-        mov ds, ax
-        mov es, ax
-        mov fs, ax
-        mov gs, ax
-        mov ss, ax
+    call gdt_install
+    ; Load the GDT
+    call gdt_load
 
-        jmp 0x08:protected_mode_entry
+    ; Call main kernel function
+    call main
 
-protected_mode_entry:
-        mov esp, stack_space     ;set stack pointer
-        call main
-.halt:
-        hlt                   ; Halt CPU (if main returns)
-        jmp .halt
+.hang:
+    cli
+    hlt
+    jmp .hang
 
 section .bss
-stack_bottom:
-        resb 8192              ; 8 Ko de pile
+    resb 8192            ; 8 KB stack
 stack_space:
-
-%include "source/gdt.asm"
