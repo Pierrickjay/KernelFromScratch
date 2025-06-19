@@ -34,29 +34,26 @@
 #define KERN_DEBUG "<7>"   // Debug-level messages
 
 // Window size (determines in boot.asm)
-#define H_WINDOW 25
-#define L_WINDOW 80
+#define H_SCREEN 25
+#define L_SCREEN 80
 
-#define SCREEN_BUFFER_SIZE (H_WINDOW * L_WINDOW * 2)
+#define SCREEN_BUFFER_SIZE (H_SCREEN * L_SCREEN * 2)
 
-typedef struct s_character_cell
-{
+typedef struct s_character_cell {
 	unsigned char color;	 // private
 	unsigned char character; // private
 } t_character_cell;
 
-#define SCREEN_CELLS_SIZE (L_WINDOW * H_WINDOW)
+#define SCREEN_CELLS_SIZE (L_SCREEN * H_SCREEN)
 
-typedef struct s_desktop
-{
+typedef struct s_desktop {
 	t_cursor		 cursor;					// private
-	t_character_cell cells[L_WINDOW][H_WINDOW]; // private
+	t_character_cell cells[L_SCREEN][H_SCREEN]; // private
 } t_desktop;
 
 #define DESKTOP_COUNT 4
 
-typedef struct s_screen_context
-{
+typedef struct s_screen_context {
 	t_desktop	   desktops[DESKTOP_COUNT]; // private
 	unsigned int   desktop_index;			// private
 	unsigned char *vga_buffer;				// private
@@ -72,9 +69,11 @@ void init_screen_context(t_screen_context *ctx);
 // Main functions
 void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned char color);
 void kfs_write_char(t_screen_context *ctx, unsigned char c);
+void kfs_clear_cursor_cell(t_screen_context *ctx);
 void clear_screen(t_screen_context *ctx);
 
 // Utility functions
-void set_color(t_screen_context *ctx, unsigned char color);
+unsigned char get_color(t_screen_context *ctx);
+void		  set_color(t_screen_context *ctx, unsigned char color);
 
 #endif

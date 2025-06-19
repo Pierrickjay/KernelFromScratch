@@ -1,6 +1,6 @@
 # Compilers
 C_COMPILER = gcc
-C_OPTIONS = -g -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
+C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
 ASM_COMPILER = nasm
 ASM_OPTIONS = -f elf32
 
@@ -14,12 +14,20 @@ C_FILES = main.c \
 	screen_manager.c \
 	print_manager.c \
 	memory_manager.c \
-	utils.c \
-	gdt.c \
 	cursor.c \
 	io.c \
+	utils.c \
+	interrupts.c \
+	keyboard_interrupts.c \
+	char_stacked_queue.c \
+	keyboard_input.c \
+	keyboard_map.c \
+	tests.c \
+	gdt.c
 
-ASM_FILES = boot.asm gdt_flush.asm
+ASM_FILES = boot.asm \
+	interrupt_handlers.asm \
+	gdt_flush.asm
 
 LINKER_FILE = $(SRC_DIRECTORY)linker.ld
 
@@ -46,7 +54,7 @@ all: $(ISO_TARGET)
 
 virtualisation: all
 	unset GTK_PATH
-	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -d int,cpu_reset -D qemu.log -serial stdio -monitor pty
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub

@@ -36,9 +36,6 @@ make fclean
 
 to clean the project and the iso file.
 
-# Documentation 
-  gdt : http://www.osdever.net/bkerndev/Docs/gdt.htm
-
 # First reflexion
 
 ## To do

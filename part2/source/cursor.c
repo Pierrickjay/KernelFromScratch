@@ -1,7 +1,7 @@
 #include "cursor.h"
 #include "io.h"
-#include "screen_manager.h"
 #include "print_manager.h"
+#include "screen_manager.h"
 
 void enable_cursor(u8 cursor_start, u8 cursor_end)
 {
@@ -35,23 +35,22 @@ void init_cursor(t_cursor *cursor)
 
 void update_hardware_cursor(t_cursor *cursor)
 {
-	move_cursor(cursor->y * L_WINDOW + cursor->x);
+	move_cursor(cursor->y * L_SCREEN + cursor->x);
 }
 
 void set_cursor_on_next_line(t_cursor *cursor)
 {
 	cursor->x = 0;
-	cursor->y = (cursor->y + 1) % H_WINDOW;
+	cursor->y = (cursor->y + 1) % H_SCREEN;
 	update_hardware_cursor(cursor);
 }
 
 void increment_cursor_by(t_cursor *cursor, int nb)
 {
 	unsigned int new_x = cursor->x + nb;
-	if (new_x >= L_WINDOW)
-	{
+	if (new_x >= L_SCREEN) {
 		set_cursor_on_next_line(cursor);
-		cursor->x = new_x % L_WINDOW;
+		cursor->x = new_x % L_SCREEN;
 	}
 	update_hardware_cursor(cursor);
 }
@@ -59,8 +58,7 @@ void increment_cursor_by(t_cursor *cursor, int nb)
 void increment_cursor(t_cursor *cursor)
 {
 	cursor->x++;
-	if (cursor->x >= L_WINDOW)
-	{
+	if (cursor->x >= L_SCREEN) {
 		set_cursor_on_next_line(cursor);
 	}
 	update_hardware_cursor(cursor);
@@ -68,8 +66,7 @@ void increment_cursor(t_cursor *cursor)
 
 void set_cursor(t_cursor *cursor, t_position pos)
 {
-	if (pos.x >= L_WINDOW || pos.y >= H_WINDOW)
-	{
+	if (pos.x >= L_SCREEN || pos.y >= H_SCREEN) {
 		print_k(KERN_ERR "ERROR: cell out of bounds\n");
 		return;
 	}
