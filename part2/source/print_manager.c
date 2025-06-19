@@ -1,12 +1,35 @@
 #include "print_manager.h"
-#include "utils.h"
-#include "gdt.h"
+
+static const char HEX_DIGITS[] = "0123456789abcdef";
+
+unsigned char get_log_color(const char *level)
+{
+	switch (level[1]) {
+		case '0':
+			return RED; // EMERG  (most critical)
+		case '1':
+			return RED; // ALERT
+		case '2':
+			return RED; // CRIT
+		case '3':
+			return YELLOW; // ERR  Red
+		case '4':
+			return YELLOW; // WARNING
+		case '5':
+			return MAGENTA; // NOTICE
+		case '6':
+			return MAGENTA; // INFO
+		case '7':
+			return WHITE; // DEBUG
+		default:
+			return WHITE;
+	}
+}
 
 int print_string(char *str)
 {
 	int index = 0;
-	while (str[index])
-	{
+	while (str[index]) {
 		kfs_write_char(&screen_context, str[index]);
 		index++;
 	}
@@ -23,15 +46,13 @@ int print_number(int nb)
 	return len_nb;
 }
 
-int print_hex(int hex)
+void print_hex(int hex)
 {
-	char base[] = "0123456789abcdef";
-	if (hex > HEX_BASE_SIZE - 1)
-	{
+	if (hex > HEX_BASE_SIZE - 1) {
 		print_hex(hex / HEX_BASE_SIZE);
 		hex %= HEX_BASE_SIZE;
 	}
-	kfs_write_char(&screen_context, base[hex]);
+	kfs_write_char(&screen_context, HEX_DIGITS[hex]);
 }
 
 int print_f(char *str, ...)
@@ -45,10 +66,8 @@ int print_f(char *str, ...)
 	args   = (int *)(&str);		// pointer of args
 	format = (char *)(*args++); // Pointer to char in first string
 	i	   = 0;
-	while (format[i])
-	{
-		if (format[i] == '%')
-		{
+	while (format[i]) {
+		if (format[i] == '%') {
 			if (format[i + 1] == '\0') // Si % est le dernier caractère
 			{
 				kfs_write_char(&screen_context, '%');
@@ -56,8 +75,7 @@ int print_f(char *str, ...)
 				break;
 			}
 			i++;
-			switch (format[i])
-			{
+			switch (format[i]) {
 				case '%': // Gestion de %%
 					kfs_write_char(&screen_context, '%');
 					total_print++;
@@ -84,8 +102,7 @@ int print_f(char *str, ...)
 					break;
 			}
 		}
-		else
-		{
+		else {
 			kfs_write_char(&screen_context, format[i]);
 			total_print++;
 		}
@@ -108,24 +125,20 @@ int print_k(const char *format, ...)
 	unsigned char color		  = WHITE;
 
 	// Check if the format starts with a log level
-	if (format[0] == '<' && format[2] == '>')
-	{
+	if (format[0] == '<' && format[2] == '>') {
 		color = get_log_color(format);
 		format += 3; // Skip the log level prefix
 	}
 
 	// Use existing print_f logic with the specified color
 	char *fmt_copy = (char *)format;
-	int	*arg_ptr  = (int *)(&args);
+	int	 *arg_ptr  = (int *)(&args);
 
 	set_color(&screen_context, color);
-	while (*fmt_copy)
-	{
-		if (*fmt_copy == '%')
-		{
+	while (*fmt_copy) {
+		if (*fmt_copy == '%') {
 			fmt_copy++;
-			switch (*fmt_copy)
-			{
+			switch (*fmt_copy) {
 				case '%':
 					kfs_write_char(&screen_context, '%');
 					total_print++;
@@ -137,7 +150,7 @@ int print_k(const char *format, ...)
 					total_print += print_string(*((char **)arg_ptr++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context,*arg_ptr++);
+					kfs_write_char(&screen_context, *arg_ptr++);
 					total_print++;
 					break;
 				case 'x':
@@ -146,33 +159,16 @@ int print_k(const char *format, ...)
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
-					kfs_write_char(&screen_context,*fmt_copy);
+					kfs_write_char(&screen_context, *fmt_copy);
 					total_print += 2;
 					break;
 			}
 		}
-		else
-		{
-			kfs_write_char(&screen_context,*fmt_copy);
+		else {
+			kfs_write_char(&screen_context, *fmt_copy);
 			total_print++;
 		}
 		fmt_copy++;
 	}
 	return total_print;
 }
-
-void print_kernel_stack(int num_entries) {
-    unsigned int *esp;
-    unsigned int i;
-    
-    // Get the current stack pointer
-    asm volatile("mov %%esp, %0" : "=r"(esp));
-    
-    print_k(KERN_INFO "Kernel Stack Dump (ESP = 0x%x):\n", (unsigned int)esp);
-    
-    // Print stack entries (memory above ESP)
-    for (i = 0; i < num_entries; i++) {
-        print_k(KERN_INFO "Stack[%d] = 0x%x\n", i, esp[i]);
-    }
-}
-
