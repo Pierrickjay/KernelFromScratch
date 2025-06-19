@@ -23,7 +23,7 @@ C_FILES = main.c \
 	keyboard_input.c \
 	keyboard_map.c \
 	tests.c \
-	gdt.c
+	serial.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm \
@@ -56,6 +56,10 @@ virtualisation: all
 	unset GTK_PATH
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
+log: all
+	unset GTK_PATH
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial file:kernel.log -monitor stdio
+
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
 	cp $(CODE_TARGET) $(OBJ_DIRECTORY)iso/boot
@@ -86,6 +90,6 @@ fclean : clean
 
 re: fclean all
 
-.PHONY: all clean fclean re format
+.PHONY: all clean fclean re format log
 
 -include $(DEPS)
