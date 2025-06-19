@@ -1,4 +1,5 @@
 #include "print_manager.h"
+#include "serial.h"
 
 static const char HEX_DIGITS[] = "0123456789abcdef";
 
@@ -87,7 +88,8 @@ int print_f(char *str, ...)
 					total_print += print_string(*((char **)args++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context, *args++);
+					kfs_write_char(&screen_context, *args);
+					args++;
 					total_print++;
 					break;
 				case 'x':
@@ -150,7 +152,8 @@ int print_k(const char *format, ...)
 					total_print += print_string(*((char **)arg_ptr++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context, *arg_ptr++);
+					kfs_write_char(&screen_context, *arg_ptr);
+					arg_ptr++;
 					total_print++;
 					break;
 				case 'x':
@@ -171,4 +174,45 @@ int print_k(const char *format, ...)
 		fmt_copy++;
 	}
 	return total_print;
+}
+
+void print_serial(char *str, ...)
+{
+	int	 *args;
+	char *format;
+	int	  i = 0;
+	char  tmp_addr[9];
+
+	args   = (int *)(&str);		// pointer of args
+	format = (char *)(*args++); // Pointer to char in first string
+	i	   = 0;
+
+	while (*format) {
+		if (*format == '%') {
+			format++;
+			switch (*format) {
+				case '%':
+					serial_write_char(SERIAL_COM1_BASE, '%');
+					break;
+				case 'd':
+					serial_print_number(SERIAL_COM1_BASE, *args++);
+					break;
+				case 's':
+					serial_write_string(SERIAL_COM1_BASE, *((char **)args++));
+					break;
+				case 'c':
+					serial_write_char(SERIAL_COM1_BASE, *args);
+					args++;					
+					break;
+				default:
+					serial_write_char(SERIAL_COM1_BASE, '%');
+					serial_write_char(SERIAL_COM1_BASE, *format);
+					break;
+			}
+		}
+		else {
+			serial_write_char(SERIAL_COM1_BASE, *format);			
+		}
+		format++;
+	}
 }

@@ -1,4 +1,3 @@
-
 #include "screen_manager.h"
 #include "memory_manager.h"
 #include "print_manager.h"
@@ -91,4 +90,32 @@ unsigned char get_color(t_screen_context *ctx)
 void set_color(t_screen_context *ctx, unsigned char color)
 {
 	ctx->color = color;
+}
+
+void scroll_screen(t_screen_context *ctx)
+{
+	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
+	
+	// Move all lines up by one
+	for (int y = 0; y < H_SCREEN - 1; y++) {
+		for (int x = 0; x < L_SCREEN; x++) {
+			// Copy the line below to the current line
+			desktop->cells[x][y] = desktop->cells[x][y + 1];
+			
+			// Update the VGA buffer
+			unsigned long vga_index = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index] = desktop->cells[x][y].character;
+			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
+		}
+	}
+	
+	// Clear the last line
+	for (int x = 0; x < L_SCREEN; x++) {
+		desktop->cells[x][H_SCREEN - 1] = (t_character_cell){ctx->color, ' '};
+		
+		// Update the VGA buffer for the last line
+		unsigned long vga_index = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
+		ctx->vga_buffer[vga_index] = ' ';
+		ctx->vga_buffer[vga_index + 1] = ctx->color;
+	}
 }
