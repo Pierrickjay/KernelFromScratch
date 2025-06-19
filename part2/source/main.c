@@ -3,6 +3,7 @@
 #include "keyboard_interrupts.h"
 #include "print_manager.h"
 #include "screen_manager.h"
+#include "serial.h"
 #include "tests.h"
 
 static void kernel_tick(void)
@@ -13,6 +14,8 @@ static void kernel_tick(void)
 
 void main()
 {
+	
+	serial_init(SERIAL_COM1_BASE);
 	init_screen_context(&screen_context);
 	init_interrupts();
 	queue_init(&keyboard_queue);
