@@ -147,12 +147,11 @@ void print_test()
 void print_f_test()
 {
 	int nb = 8;
-
-	clear_screen(&screen_context);
 	print_f("ceci est un int test %d\n", 123);
 	print_f("ceci est un char test %c\n", 'C');
 	int test = print_f("ceci est un string test %s\n", "frefjreferf");
-	print_f("ceci est un hex test %x\n", &nb);
+	int writed_char = print_f("ceci est un hex test %x\n", &nb);
+	print_f("nb of writed char: %d\n", writed_char);
 	print_string("Versiwfwfefewfwefewoweewefwefew\n");
 	print_number(test);
 }
@@ -162,10 +161,10 @@ void main_tests()
 	int nb = 8;
 	// clear_screen(&screen_context); // Commenting this 
 	set_color(&screen_context, BG(BLACK) | WHITE);
-
+	print_f_test();
 	print_k_test();
 	kfs_write_char(&screen_context, '\n');
-	print_42();
+	// print_42();
 
 	kfs_write_char(&screen_context, 'a');
 	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);

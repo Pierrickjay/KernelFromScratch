@@ -47,13 +47,23 @@ int print_number(int nb)
 	return len_nb;
 }
 
-void print_hex(int hex)
+int print_hex(int hex, int writed_char)
 {
 	if (hex > HEX_BASE_SIZE - 1) {
-		print_hex(hex / HEX_BASE_SIZE);
+		writed_char = print_hex(hex / HEX_BASE_SIZE, writed_char);
 		hex %= HEX_BASE_SIZE;
 	}
 	kfs_write_char(&screen_context, HEX_DIGITS[hex]);
+	return (writed_char + 1);
+}
+
+void print_hex_serial(int hex)
+{
+	if (hex > HEX_BASE_SIZE - 1) {
+		print_hex_serial(hex / HEX_BASE_SIZE);
+		hex %= HEX_BASE_SIZE;
+	}
+	serial_write_char(SERIAL_COM1_BASE, HEX_DIGITS[hex]);
 }
 
 int print_f(char *str, ...)
@@ -93,9 +103,7 @@ int print_f(char *str, ...)
 					total_print++;
 					break;
 				case 'x':
-					int count_hex = 0;
-					print_hex(*args++);
-					total_print += count_hex;
+					total_print +=print_hex(*args++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
@@ -157,8 +165,7 @@ int print_k(const char *format, ...)
 					total_print++;
 					break;
 				case 'x':
-					print_hex(*arg_ptr++);
-					total_print++;
+					total_print += print_hex(*arg_ptr++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
@@ -203,6 +210,9 @@ void print_serial(char *str, ...)
 				case 'c':
 					serial_write_char(SERIAL_COM1_BASE, *args);
 					args++;					
+					break;
+				case 'x':
+					print_hex_serial(*args++);
 					break;
 				default:
 					serial_write_char(SERIAL_COM1_BASE, '%');
