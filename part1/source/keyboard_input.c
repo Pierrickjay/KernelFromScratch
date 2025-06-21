@@ -66,7 +66,6 @@ void handle_keyboard_inputs(t_char_stacked_queue *queue)
 {
 	while (!queue_is_empty(queue)) {
 		unsigned char scancode = queue_pop(queue);
-		print_serial("Processing scancode: %d\n", scancode);
 		if (input_mode == INPUT_MODE_DISABLED) {
 			continue;
 		}
