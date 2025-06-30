@@ -7,6 +7,7 @@
 #include "tests.h"
 #include "gdt.h"
 
+
 static void kernel_tick(void)
 {
 	handle_keyboard_inputs(&keyboard_queue);
@@ -23,7 +24,6 @@ void main()
 	main_tests();
 
 	set_input_mode(INPUT_MODE_NORMAL);
-
 	while (1) {
 		kernel_tick();
 	}

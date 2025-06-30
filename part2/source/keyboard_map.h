@@ -7,6 +7,8 @@
 #define UP_ARROW 0x48
 #define DOWN_ARROW 0x50
 
+#define BACKSPACE 0x0E
+
 // États des touches spéciales
 #define SHIFT_PRESSED 0x1
 #define CAPS_LOCK 0x2
