@@ -12,5 +12,6 @@ void init_position(t_position *pos);
 
 void itoa(int n, char *str);
 int	 intlen(int n);
+int atoi(const char *str);
 
 #endif

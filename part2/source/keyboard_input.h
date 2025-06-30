@@ -6,6 +6,7 @@
 
 #define INPUT_MODE_DISABLED 0
 #define INPUT_MODE_NORMAL 1
+#define INPUT_MODE_MINISHELL 2
 
 void set_input_mode(u8 mode);
 char get_input_mode(void);
