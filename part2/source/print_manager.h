@@ -12,6 +12,8 @@ int print_string(char *str);
 int print_f(char *str, ...);
 int print_k(const char *format, ...);
 
+void print_kernel_stack(int num_entries);
+
 //Debug function to print to serial port
 void print_serial(char *str, ...);
 

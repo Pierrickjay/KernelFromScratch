@@ -21,6 +21,24 @@
 
 #define BG(color) (color << 4)
 
+typedef struct {
+    const char *name;
+    int value;
+} color_entry_t;
+
+static color_entry_t available_colors[] = {
+    {"black",      BLACK},
+    {"blue",       BLUE},
+    {"green",      GREEN},
+    {"red",        RED},
+    {"intensive",  INTENSIVE},
+    {"cyan",       CYAN},
+    {"yellow",     YELLOW},
+    {"magenta",    MAGENTA},
+    {"white",      WHITE},
+};
+#define COLOR_COUNT (sizeof(available_colors)/sizeof(available_colors[0]))
+
 #define MAKE_ATTRIBUTE(fg, bg) (BG(bg) | fg)
 #define DEFAULT_ATTRIBUTE MAKE_ATTRIBUTE(WHITE, BLACK)
 
@@ -74,6 +92,7 @@ void clear_screen(t_screen_context *ctx);
 
 // Utility functions
 unsigned char get_color(t_screen_context *ctx);
+unsigned char get_color_value(const char *name);
 void		  set_color(t_screen_context *ctx, unsigned char color);
 
 void scroll_screen(t_screen_context *ctx);

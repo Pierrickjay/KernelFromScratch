@@ -24,7 +24,9 @@ C_FILES = main.c \
 	keyboard_map.c \
 	tests.c \
 	serial.c \
-	gdt.c
+	gdt.c \
+	mini_minishell.c \
+	string.c \
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm \

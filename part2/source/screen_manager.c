@@ -1,6 +1,7 @@
 #include "screen_manager.h"
 #include "memory_manager.h"
 #include "print_manager.h"
+#include "mini_minishell.h"
 
 t_screen_context screen_context;
 
@@ -61,6 +62,9 @@ void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned cha
 void kfs_write_char(t_screen_context *ctx, unsigned char c)
 {
 	kfs_write_colored_char(ctx, c, ctx->color);
+	// print_serial("cursor at pos = (%d, %d)\n",
+	// 			 ctx->desktops[ctx->desktop_index].cursor.x,
+	// 			 ctx->desktops[ctx->desktop_index].cursor.y);
 }
 
 void kfs_clear_cursor_cell(t_screen_context *ctx)
@@ -92,27 +96,37 @@ void set_color(t_screen_context *ctx, unsigned char color)
 	ctx->color = color;
 }
 
+unsigned char get_color_value(const char *name) {
+    for (size_t i = 0; i < COLOR_COUNT; ++i) {
+        if (strcmp(available_colors[i].name, name) == 0) {
+            return available_colors[i].value;
+        }
+    }
+	print_k(KERN_ERR "ERROR: color '%s' not found\nSwitching to white", name);
+    return WHITE; // Default to white if color not found // maybe change this to an error value
+}
+
 void scroll_screen(t_screen_context *ctx)
 {
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
-	
+
 	// Move all lines up by one
 	for (int y = 0; y < H_SCREEN - 1; y++) {
 		for (int x = 0; x < L_SCREEN; x++) {
 			// Copy the line below to the current line
 			desktop->cells[x][y] = desktop->cells[x][y + 1];
-			
+
 			// Update the VGA buffer
 			unsigned long vga_index = (y * L_SCREEN + x) * 2;
 			ctx->vga_buffer[vga_index] = desktop->cells[x][y].character;
 			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
 		}
 	}
-	
+
 	// Clear the last line
 	for (int x = 0; x < L_SCREEN; x++) {
 		desktop->cells[x][H_SCREEN - 1] = (t_character_cell){ctx->color, ' '};
-		
+
 		// Update the VGA buffer for the last line
 		unsigned long vga_index = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
 		ctx->vga_buffer[vga_index] = ' ';
