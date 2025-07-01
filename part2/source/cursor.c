@@ -62,9 +62,6 @@ void set_cursor_on_next_line(t_cursor *cursor)
 		cursor->x = 0;
 		cursor->y = (cursor->y + 1) % H_SCREEN;
 	}
-	if (get_input_mode() == INPUT_MODE_MINISHELL) {
-		kfs_write_char(&screen_context, '>'); // Print newline in mini minishell mode	
-	}
 	update_hardware_cursor(cursor);
 }
 
