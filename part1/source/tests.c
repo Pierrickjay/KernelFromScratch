@@ -161,11 +161,11 @@ void main_tests()
 	int nb = 8;
 	// clear_screen(&screen_context); // Commenting this 
 	set_color(&screen_context, BG(BLACK) | WHITE);
-	print_f_test();
-	print_k_test();
-	kfs_write_char(&screen_context, '\n');
-	// print_42();
+	// print_f_test();
+	// print_k_test();
+	// kfs_write_char(&screen_context, '\n');
+	print_42();
 
-	kfs_write_char(&screen_context, 'a');
-	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+	// kfs_write_char(&screen_context, 'a');
+	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 }
