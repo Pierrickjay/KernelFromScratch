@@ -92,7 +92,32 @@ void set_color(t_screen_context *ctx, unsigned char color)
 	ctx->color = color;
 }
 
-void scroll_screen(t_screen_context *ctx)
+void scroll_screen_up(t_screen_context *ctx)
+{
+	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
+
+	// Move all lines down by one
+	for (int y = H_SCREEN - 1; y > 0; y--) {
+		for (int x = 0; x < L_SCREEN; x++) {
+			desktop->cells[x][y] = desktop->cells[x][y - 1];
+
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
+			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
+		}
+	}
+
+	// Clear the first line
+	for (int x = 0; x < L_SCREEN; x++) {
+		desktop->cells[x][0] = (t_character_cell){ctx->color, ' '};
+
+		unsigned long vga_index		   = (0 * L_SCREEN + x) * 2;
+		ctx->vga_buffer[vga_index]	   = ' ';
+		ctx->vga_buffer[vga_index + 1] = ctx->color;
+	}
+}
+
+void scroll_screen_down(t_screen_context *ctx)
 {
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
 
