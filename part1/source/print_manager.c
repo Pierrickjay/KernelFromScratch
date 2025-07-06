@@ -1,4 +1,5 @@
 #include "print_manager.h"
+#include "serial.h"
 
 static const char HEX_DIGITS[] = "0123456789abcdef";
 
@@ -46,13 +47,14 @@ int print_number(int nb)
 	return len_nb;
 }
 
-void print_hex(int hex)
+int print_hex(int hex, int writed_char)
 {
 	if (hex > HEX_BASE_SIZE - 1) {
-		print_hex(hex / HEX_BASE_SIZE);
+		writed_char = print_hex(hex / HEX_BASE_SIZE, writed_char);
 		hex %= HEX_BASE_SIZE;
 	}
 	kfs_write_char(&screen_context, HEX_DIGITS[hex]);
+	return (writed_char + 1);
 }
 
 int print_f(char *str, ...)
@@ -87,13 +89,12 @@ int print_f(char *str, ...)
 					total_print += print_string(*((char **)args++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context, *args++);
+					kfs_write_char(&screen_context, *args);
+					args++;
 					total_print++;
 					break;
 				case 'x':
-					int count_hex = 0;
-					print_hex(*args++);
-					total_print += count_hex;
+					total_print +=print_hex(*args++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
@@ -150,12 +151,12 @@ int print_k(const char *format, ...)
 					total_print += print_string(*((char **)arg_ptr++));
 					break;
 				case 'c':
-					kfs_write_char(&screen_context, *arg_ptr++);
+					kfs_write_char(&screen_context, *arg_ptr);
+					arg_ptr++;
 					total_print++;
 					break;
 				case 'x':
-					print_hex(*arg_ptr++);
-					total_print++;
+					total_print += print_hex(*arg_ptr++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');

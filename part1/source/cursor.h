@@ -17,8 +17,12 @@
 void init_cursor(t_cursor *cursor);
 
 void set_cursor_on_next_line(t_cursor *cursor);
+void set_cursor_on_upper_line(t_cursor *cursor);
 void increment_cursor_by(t_cursor *cursor, int nb);
+void decrement_cursor_by(t_cursor *cursor, int nb);
 void increment_cursor(t_cursor *cursor);
+void decrement_cursor(t_cursor *cursor);
 void set_cursor(t_cursor *cursor, t_position pos);
+
 
 #endif

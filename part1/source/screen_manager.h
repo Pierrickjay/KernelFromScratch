@@ -76,4 +76,8 @@ void clear_screen(t_screen_context *ctx);
 unsigned char get_color(t_screen_context *ctx);
 void		  set_color(t_screen_context *ctx, unsigned char color);
 
+void scroll_screen(t_screen_context *ctx);
+
+void change_desktop(t_screen_context *ctx, unsigned char desktop_index);
+
 #endif

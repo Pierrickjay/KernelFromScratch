@@ -147,12 +147,11 @@ void print_test()
 void print_f_test()
 {
 	int nb = 8;
-
-	clear_screen(&screen_context);
 	print_f("ceci est un int test %d\n", 123);
 	print_f("ceci est un char test %c\n", 'C');
 	int test = print_f("ceci est un string test %s\n", "frefjreferf");
-	print_f("ceci est un hex test %x\n", &nb);
+	int writed_char = print_f("ceci est un hex test %x\n", &nb);
+	print_f("nb of writed char: %d\n", writed_char);
 	print_string("Versiwfwfefewfwefewoweewefwefew\n");
 	print_number(test);
 }
@@ -160,29 +159,13 @@ void print_f_test()
 void main_tests()
 {
 	int nb = 8;
-	clear_screen(&screen_context);
+	// clear_screen(&screen_context); // Commenting this 
 	set_color(&screen_context, BG(BLACK) | WHITE);
-	// print_test();
 	// print_f_test();
-	// set_color(&screen_context, YELLOW);
-	// print_string("hello val ca va ? ");
-	// set_color(&screen_context, GREEN);
-	// print_f("\nD\n");
-	// print_number(8988);
-	// set_color(&screen_context, WHITE);
-	// print_f("ceci est un int test %d\n", 123);
-	// print_f("ceci est un char test %c\n", 'C');
-	// int test = print_f("ceci est un string test %s", "frefjreferf");
-	// print_f("ceci est un hex test %x", &nb);
-	// set_color(&screen_context, RED);
-	// print_string("Versiwfwfefewfwefewoweewefwefew\n");
-	// set_color(&screen_context, WHITE);
-	// print_number(test);
-
-	print_k_test();
-	kfs_write_char(&screen_context, '\n');
+	// print_k_test();
+	// kfs_write_char(&screen_context, '\n');
 	print_42();
 
-	kfs_write_char(&screen_context, 'a');
-	print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+	// kfs_write_char(&screen_context, 'a');
+	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
 }

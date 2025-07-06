@@ -21,8 +21,9 @@ C_FILES = main.c \
 	keyboard_interrupts.c \
 	char_stacked_queue.c \
 	keyboard_input.c \
-	keyboard_map.c \
-	tests.c
+	tests.c \
+	serial.c \
+	keyboard_text_mode_map.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm
@@ -54,11 +55,15 @@ virtualisation: all
 	unset GTK_PATH
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
+log: all
+	unset GTK_PATH
+	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial file:kernel.log -monitor stdio
+
 $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
 	cp $(CODE_TARGET) $(OBJ_DIRECTORY)iso/boot
 	cp $(GRUB_CFG) $(OBJ_DIRECTORY)iso/boot/grub/
-	grub-mkrescue -o $(ISO_TARGET) $(OBJ_DIRECTORY)iso/
+	grub-mkrescue --compress=xz --fonts= --themes= --locales= -o $(ISO_TARGET) $(OBJ_DIRECTORY)iso/
 
 $(CODE_TARGET): $(C_OBJ) $(ASM_OBJ)
 	$(LINKER) $(LINKER_OPTIONS) $(LINKER_FILE) -o $(CODE_TARGET) $(OBJ)
@@ -84,6 +89,6 @@ fclean : clean
 
 re: fclean all
 
-.PHONY: all clean fclean re format
+.PHONY: all clean fclean re format log
 
 -include $(DEPS)
