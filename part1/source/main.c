@@ -14,7 +14,6 @@ static void kernel_tick(void)
 
 void main()
 {
-	
 	// serial_init(SERIAL_COM1_BASE); # debug only
 	init_screen_context(&screen_context);
 	init_interrupts();
