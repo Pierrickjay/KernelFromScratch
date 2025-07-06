@@ -95,27 +95,45 @@ void set_color(t_screen_context *ctx, unsigned char color)
 void scroll_screen(t_screen_context *ctx)
 {
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
-	
+
 	// Move all lines up by one
 	for (int y = 0; y < H_SCREEN - 1; y++) {
 		for (int x = 0; x < L_SCREEN; x++) {
 			// Copy the line below to the current line
 			desktop->cells[x][y] = desktop->cells[x][y + 1];
-			
+
 			// Update the VGA buffer
-			unsigned long vga_index = (y * L_SCREEN + x) * 2;
-			ctx->vga_buffer[vga_index] = desktop->cells[x][y].character;
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
 			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
 		}
 	}
-	
+
 	// Clear the last line
 	for (int x = 0; x < L_SCREEN; x++) {
 		desktop->cells[x][H_SCREEN - 1] = (t_character_cell){ctx->color, ' '};
-		
+
 		// Update the VGA buffer for the last line
-		unsigned long vga_index = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
-		ctx->vga_buffer[vga_index] = ' ';
+		unsigned long vga_index		   = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
+		ctx->vga_buffer[vga_index]	   = ' ';
 		ctx->vga_buffer[vga_index + 1] = ctx->color;
 	}
+}
+
+void load_desktop_to_vga_buffer(t_screen_context *ctx, unsigned char desktop_index)
+{
+	t_desktop *desktop = &ctx->desktops[desktop_index];
+	for (int y = 0; y < H_SCREEN; y++) {
+		for (int x = 0; x < L_SCREEN; x++) {
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
+			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
+		}
+	}
+}
+
+void change_desktop(t_screen_context *ctx, unsigned char desktop_index)
+{
+	ctx->desktop_index = desktop_index;
+	load_desktop_to_vga_buffer(ctx, desktop_index);
 }

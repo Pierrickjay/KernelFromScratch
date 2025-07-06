@@ -8,7 +8,7 @@
 #define CTRL_PRESSED 0x4
 #define WINDOWS_PRESSED 0x8
 #define ALT_PRESSED 0x10
-#define ALT_GR_PRESSED 0x20
+#define RIGHT_ALT_PRESSED 0x20
 
 void handle_keyboard_text_mode(u16 scancode);
 

@@ -66,6 +66,30 @@ static u16 handle_caps_lock(void)
 	return KEY_HANDLED;
 }
 
+static u16 handle_f1(void)
+{
+	change_desktop(&screen_context, 0);
+	return KEY_HANDLED;
+}
+
+static u16 handle_f2(void)
+{
+	change_desktop(&screen_context, 1);
+	return KEY_HANDLED;
+}
+
+static u16 handle_f3(void)
+{
+	change_desktop(&screen_context, 2);
+	return KEY_HANDLED;
+}
+
+static u16 handle_f4(void)
+{
+	change_desktop(&screen_context, 3);
+	return KEY_HANDLED;
+}
+
 typedef u16 (*key_handler_t)(void);
 
 static const key_handler_t custom_keys_map[KEYBOARD_INDEXES_LENGTH] = {
@@ -83,6 +107,11 @@ static const key_handler_t custom_keys_map[KEYBOARD_INDEXES_LENGTH] = {
 	[LSHIFT_RELEASED_INDEX]	 = handle_left_shift,
 	[RSHIFT_RELEASED_INDEX]	 = handle_right_shift,
 	[CAPSLOCK_PRESSED_INDEX] = handle_caps_lock,
+
+	[F1_PRESSED_INDEX] = handle_f1,
+	[F2_PRESSED_INDEX] = handle_f2,
+	[F3_PRESSED_INDEX] = handle_f3,
+	[F4_PRESSED_INDEX] = handle_f4,
 };
 
 const char keyboard_index_to_ascii[] = {
