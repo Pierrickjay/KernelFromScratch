@@ -3,7 +3,6 @@
 #include "print_manager.h"
 #include "screen_manager.h"
 
-
 void enable_cursor(u8 cursor_start, u8 cursor_end)
 {
 	outb(CURSOR_PORT_CMD, CURSOR_START_REG);
@@ -42,7 +41,8 @@ void update_hardware_cursor(t_cursor *cursor)
 void set_cursor_on_upper_line(t_cursor *cursor)
 {
 	if (cursor->y == 0) {
-		cursor->x = 0; // Stay at the beginning if already at the top
+		scroll_screen_up(&screen_context);
+		cursor->x = 0;
 	}
 	else {
 		cursor->x = 0;
@@ -53,9 +53,8 @@ void set_cursor_on_upper_line(t_cursor *cursor)
 
 void set_cursor_on_next_line(t_cursor *cursor)
 {
-	
 	if (cursor->y == H_SCREEN - 1) {
-		scroll_screen(&screen_context);
+		scroll_screen_down(&screen_context);
 		cursor->x = 0;
 	}
 	else {
