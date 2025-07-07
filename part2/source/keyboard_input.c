@@ -1,145 +1,302 @@
 #include "keyboard_input.h"
-#include "keyboard_map.h"
+#include "keyboard_text_mode_map.h"
 #include "print_manager.h"
 #include "mini_minishell.h"
 
-static u8 special_keys		  = 0;
-static u8 left_shift_pressed  = 0;
-static u8 right_shift_pressed = 0;
-static u8 input_mode		  = INPUT_MODE_DISABLED;
+static u8 input_mode = INPUT_MODE_DISABLED;
 
-static char writeds_char[80] = {0}; // buffer for writeds command
+static u16 simple_keys_map[256] = {
+	[0x01] = ESCAPE_PRESSED_INDEX,
+	[0x02] = ONE_PRESSED_INDEX,
+	[0x03] = TWO_PRESSED_INDEX,
+	[0x04] = THREE_PRESSED_INDEX,
+	[0x05] = FOUR_PRESSED_INDEX,
+	[0x06] = FIVE_PRESSED_INDEX,
+	[0x07] = SIX_PRESSED_INDEX,
+	[0x08] = SEVEN_PRESSED_INDEX,
+	[0x09] = EIGHT_PRESSED_INDEX,
+	[0x0A] = NINE_PRESSED_INDEX,
+	[0x0B] = ZERO_PRESSED_INDEX,
+	[0x0C] = MINUS_PRESSED_INDEX,
+	[0x0D] = EQUALS_PRESSED_INDEX,
+	[0x0E] = BACKSPACE_PRESSED_INDEX,
+	[0x0F] = TAB_PRESSED_INDEX,
+	[0x10] = Q_PRESSED_INDEX,
+	[0x11] = W_PRESSED_INDEX,
+	[0x12] = E_PRESSED_INDEX,
+	[0x13] = R_PRESSED_INDEX,
+	[0x14] = T_PRESSED_INDEX,
+	[0x15] = Y_PRESSED_INDEX,
+	[0x16] = U_PRESSED_INDEX,
+	[0x17] = I_PRESSED_INDEX,
+	[0x18] = O_PRESSED_INDEX,
+	[0x19] = P_PRESSED_INDEX,
+	[0x1A] = LEFT_BRACKET_PRESSED_INDEX,
+	[0x1B] = RIGHT_BRACKET_PRESSED_INDEX,
+	[0x1C] = ENTER_PRESSED_INDEX,
+	[0x1D] = LCTRL_PRESSED_INDEX,
+	[0x1E] = A_PRESSED_INDEX,
+	[0x1F] = S_PRESSED_INDEX,
+	[0x20] = D_PRESSED_INDEX,
+	[0x21] = F_PRESSED_INDEX,
+	[0x22] = G_PRESSED_INDEX,
+	[0x23] = H_PRESSED_INDEX,
+	[0x24] = J_PRESSED_INDEX,
+	[0x25] = K_PRESSED_INDEX,
+	[0x26] = L_PRESSED_INDEX,
+	[0x27] = SEMICOLON_PRESSED_INDEX,
+	[0x28] = SINGLE_QUOTE_PRESSED_INDEX,
+	[0x29] = BACK_TICK_PRESSED_INDEX,
+	[0x2A] = LSHIFT_PRESSED_INDEX,
+	[0x2B] = BACKSLASH_PRESSED_INDEX,
+	[0x2C] = Z_PRESSED_INDEX,
+	[0x2D] = X_PRESSED_INDEX,
+	[0x2E] = C_PRESSED_INDEX,
+	[0x2F] = V_PRESSED_INDEX,
+	[0x30] = B_PRESSED_INDEX,
+	[0x31] = N_PRESSED_INDEX,
+	[0x32] = M_PRESSED_INDEX,
+	[0x33] = COMMA_PRESSED_INDEX,
+	[0x34] = PERIOD_PRESSED_INDEX,
+	[0x35] = SLASH_PRESSED_INDEX,
+	[0x36] = RSHIFT_PRESSED_INDEX,
+	[0x37] = KEYPAD_ASTERISK_PRESSED_INDEX,
+	[0x38] = LALT_PRESSED_INDEX,
+	[0x39] = SPACE_PRESSED_INDEX,
+	[0x3A] = CAPSLOCK_PRESSED_INDEX,
+	[0x3B] = F1_PRESSED_INDEX,
+	[0x3C] = F2_PRESSED_INDEX,
+	[0x3D] = F3_PRESSED_INDEX,
+	[0x3E] = F4_PRESSED_INDEX,
+	[0x3F] = F5_PRESSED_INDEX,
+	[0x40] = F6_PRESSED_INDEX,
+	[0x41] = F7_PRESSED_INDEX,
+	[0x42] = F8_PRESSED_INDEX,
+	[0x43] = F9_PRESSED_INDEX,
+	[0x44] = F10_PRESSED_INDEX,
+	[0x45] = NUMBERLOCK_PRESSED_INDEX,
+	[0x46] = SCROLLLOCK_PRESSED_INDEX,
+	[0x47] = KEYPAD_7_PRESSED_INDEX,
+	[0x48] = KEYPAD_8_PRESSED_INDEX,
+	[0x49] = KEYPAD_9_PRESSED_INDEX,
+	[0x4A] = KEYPAD_MINUS_PRESSED_INDEX,
+	[0x4B] = KEYPAD_4_PRESSED_INDEX,
+	[0x4C] = KEYPAD_5_PRESSED_INDEX,
+	[0x4D] = KEYPAD_6_PRESSED_INDEX,
+	[0x4E] = KEYPAD_PLUS_PRESSED_INDEX,
+	[0x4F] = KEYPAD_1_PRESSED_INDEX,
+	[0x50] = KEYPAD_2_PRESSED_INDEX,
+	[0x51] = KEYPAD_3_PRESSED_INDEX,
+	[0x52] = KEYPAD_0_PRESSED_INDEX,
+	[0x53] = KEYPAD_PERIOD_PRESSED_INDEX,
+	[0x57] = F11_PRESSED_INDEX,
+	[0x58] = F12_PRESSED_INDEX,
 
-void handle_keyboard_arrow(unsigned char scancode)
+	[0x81] = ESCAPE_RELEASED_INDEX,
+	[0x82] = ONE_RELEASED_INDEX,
+	[0x83] = TWO_RELEASED_INDEX,
+	[0x84] = THREE_RELEASED_INDEX,
+	[0x85] = FOUR_RELEASED_INDEX,
+	[0x86] = FIVE_RELEASED_INDEX,
+	[0x87] = SIX_RELEASED_INDEX,
+	[0x88] = SEVEN_RELEASED_INDEX,
+	[0x89] = EIGHT_RELEASED_INDEX,
+	[0x8A] = NINE_RELEASED_INDEX,
+	[0x8B] = ZERO_RELEASED_INDEX,
+	[0x8C] = MINUS_RELEASED_INDEX,
+	[0x8D] = EQUALS_RELEASED_INDEX,
+	[0x8E] = BACKSPACE_RELEASED_INDEX,
+	[0x8F] = TAB_RELEASED_INDEX,
+	[0x90] = Q_RELEASED_INDEX,
+	[0x91] = W_RELEASED_INDEX,
+	[0x92] = E_RELEASED_INDEX,
+	[0x93] = R_RELEASED_INDEX,
+	[0x94] = T_RELEASED_INDEX,
+	[0x95] = Y_RELEASED_INDEX,
+	[0x96] = U_RELEASED_INDEX,
+	[0x97] = I_RELEASED_INDEX,
+	[0x98] = O_RELEASED_INDEX,
+	[0x99] = P_RELEASED_INDEX,
+	[0x9A] = LEFT_BRACKET_RELEASED_INDEX,
+	[0x9B] = RIGHT_BRACKET_RELEASED_INDEX,
+	[0x9C] = ENTER_RELEASED_INDEX,
+	[0x9D] = LCTRL_RELEASED_INDEX,
+	[0x9E] = A_RELEASED_INDEX,
+	[0x9F] = S_RELEASED_INDEX,
+	[0xA0] = D_RELEASED_INDEX,
+	[0xA1] = F_RELEASED_INDEX,
+	[0xA2] = G_RELEASED_INDEX,
+	[0xA3] = H_RELEASED_INDEX,
+	[0xA4] = J_RELEASED_INDEX,
+	[0xA5] = K_RELEASED_INDEX,
+	[0xA6] = L_RELEASED_INDEX,
+	[0xA7] = SEMICOLON_RELEASED_INDEX,
+	[0xA8] = SINGLE_QUOTE_RELEASED_INDEX,
+	[0xA9] = BACK_TICK_RELEASED_INDEX,
+	[0xAA] = LSHIFT_RELEASED_INDEX,
+	[0xAB] = BACKSLASH_RELEASED_INDEX,
+	[0xAC] = Z_RELEASED_INDEX,
+	[0xAD] = X_RELEASED_INDEX,
+	[0xAE] = C_RELEASED_INDEX,
+	[0xAF] = V_RELEASED_INDEX,
+	[0xB0] = B_RELEASED_INDEX,
+	[0xB1] = N_RELEASED_INDEX,
+	[0xB2] = M_RELEASED_INDEX,
+	[0xB3] = COMMA_RELEASED_INDEX,
+	[0xB4] = PERIOD_RELEASED_INDEX,
+	[0xB5] = SLASH_RELEASED_INDEX,
+	[0xB6] = RSHIFT_RELEASED_INDEX,
+	[0xB7] = KEYPAD_ASTERISK_RELEASED_INDEX,
+	[0xB8] = LALT_RELEASED_INDEX,
+	[0xB9] = SPACE_RELEASED_INDEX,
+	[0xBA] = CAPSLOCK_RELEASED_INDEX,
+	[0xBB] = F1_RELEASED_INDEX,
+	[0xBC] = F2_RELEASED_INDEX,
+	[0xBD] = F3_RELEASED_INDEX,
+	[0xBE] = F4_RELEASED_INDEX,
+	[0xBF] = F5_RELEASED_INDEX,
+	[0xC0] = F6_RELEASED_INDEX,
+	[0xC1] = F7_RELEASED_INDEX,
+	[0xC2] = F8_RELEASED_INDEX,
+	[0xC3] = F9_RELEASED_INDEX,
+	[0xC4] = F10_RELEASED_INDEX,
+	[0xC5] = NUMBERLOCK_RELEASED_INDEX,
+	[0xC6] = SCROLLLOCK_RELEASED_INDEX,
+	[0xC7] = KEYPAD_7_RELEASED_INDEX,
+	[0xC8] = KEYPAD_8_RELEASED_INDEX,
+	[0xC9] = KEYPAD_9_RELEASED_INDEX,
+	[0xCA] = KEYPAD_MINUS_RELEASED_INDEX,
+	[0xCB] = KEYPAD_4_RELEASED_INDEX,
+	[0xCC] = KEYPAD_5_RELEASED_INDEX,
+	[0xCD] = KEYPAD_6_RELEASED_INDEX,
+	[0xCE] = KEYPAD_PLUS_RELEASED_INDEX,
+	[0xCF] = KEYPAD_1_RELEASED_INDEX,
+	[0xD0] = KEYPAD_2_RELEASED_INDEX,
+	[0xD1] = KEYPAD_3_RELEASED_INDEX,
+	[0xD2] = KEYPAD_0_RELEASED_INDEX,
+	[0xD3] = KEYPAD_PERIOD_RELEASED_INDEX,
+	[0xD7] = F11_RELEASED_INDEX,
+	[0xD8] = F12_RELEASED_INDEX,
+};
+
+static u16 extended_e0_map[256] = {
+	[0x10] = MULTIMEDIA_PREVIOUS_TRACK_PRESSED_INDEX,
+	[0x19] = MULTIMEDIA_NEXT_TRACK_PRESSED_INDEX,
+	[0x1C] = KEYPAD_ENTER_PRESSED_INDEX,
+	[0x1D] = RCTRL_PRESSED_INDEX,
+	[0x20] = MULTIMEDIA_MUTE_PRESSED_INDEX,
+	[0x21] = MULTIMEDIA_CALCULATOR_PRESSED_INDEX,
+	[0x22] = MULTIMEDIA_PLAY_PRESSED_INDEX,
+	[0x24] = MULTIMEDIA_STOP_PRESSED_INDEX,
+	[0x2E] = MULTIMEDIA_VOLUME_DOWN_PRESSED_INDEX,
+	[0x30] = MULTIMEDIA_VOLUME_UP_PRESSED_INDEX,
+	[0x32] = MULTIMEDIA_WWW_HOME_PRESSED_INDEX,
+	[0x35] = KEYPAD_SLASH_PRESSED_INDEX,
+	[0x38] = RALT_PRESSED_INDEX,
+	[0x47] = HOME_PRESSED_INDEX,
+	[0x48] = CURSOR_UP_PRESSED_INDEX,
+	[0x49] = PAGE_UP_PRESSED_INDEX,
+	[0x4B] = CURSOR_LEFT_PRESSED_INDEX,
+	[0x4D] = CURSOR_RIGHT_PRESSED_INDEX,
+	[0x4F] = END_PRESSED_INDEX,
+	[0x50] = CURSOR_DOWN_PRESSED_INDEX,
+	[0x51] = PAGE_DOWN_PRESSED_INDEX,
+	[0x52] = INSERT_PRESSED_INDEX,
+	[0x53] = DELETE_PRESSED_INDEX,
+	[0x5B] = LEFT_GUI_PRESSED_INDEX,
+	[0x5C] = RIGHT_GUI_PRESSED_INDEX,
+	[0x5D] = APPS_PRESSED_INDEX,
+	[0x5E] = ACPI_POWER_PRESSED_INDEX,
+	[0x5F] = ACPI_SLEEP_PRESSED_INDEX,
+	[0x63] = ACPI_WAKE_PRESSED_INDEX,
+	[0x65] = MULTIMEDIA_WWW_SEARCH_PRESSED_INDEX,
+	[0x66] = MULTIMEDIA_WWW_FAVORITES_PRESSED_INDEX,
+	[0x67] = MULTIMEDIA_WWW_REFRESH_PRESSED_INDEX,
+	[0x68] = MULTIMEDIA_WWW_STOP_PRESSED_INDEX,
+	[0x69] = MULTIMEDIA_WWW_FORWARD_PRESSED_INDEX,
+	[0x6A] = MULTIMEDIA_WWW_BACK_PRESSED_INDEX,
+	[0x6B] = MULTIMEDIA_MY_COMPUTER_PRESSED_INDEX,
+	[0x6C] = MULTIMEDIA_EMAIL_PRESSED_INDEX,
+	[0x6D] = MULTIMEDIA_MEDIA_SELECT_PRESSED_INDEX,
+	[0x90] = MULTIMEDIA_PREVIOUS_TRACK_RELEASED_INDEX,
+	[0x99] = MULTIMEDIA_NEXT_TRACK_RELEASED_INDEX,
+	[0x9C] = KEYPAD_ENTER_RELEASED_INDEX,
+	[0x9D] = RCTRL_RELEASED_INDEX,
+	[0xA0] = MULTIMEDIA_MUTE_RELEASED_INDEX,
+	[0xA1] = MULTIMEDIA_CALCULATOR_RELEASED_INDEX,
+	[0xA2] = MULTIMEDIA_PLAY_RELEASED_INDEX,
+	[0xA4] = MULTIMEDIA_STOP_RELEASED_INDEX,
+	[0xAE] = MULTIMEDIA_VOLUME_DOWN_RELEASED_INDEX,
+	[0xB0] = MULTIMEDIA_VOLUME_UP_RELEASED_INDEX,
+	[0xB2] = MULTIMEDIA_WWW_HOME_RELEASED_INDEX,
+	[0xB5] = KEYPAD_SLASH_RELEASED_INDEX,
+	[0xB8] = RALT_RELEASED_INDEX,
+	[0xC7] = HOME_RELEASED_INDEX,
+	[0xC8] = CURSOR_UP_RELEASED_INDEX,
+	[0xC9] = PAGE_UP_RELEASED_INDEX,
+	[0xCB] = CURSOR_LEFT_RELEASED_INDEX,
+	[0xCD] = CURSOR_RIGHT_RELEASED_INDEX,
+	[0xCF] = END_RELEASED_INDEX,
+	[0xD0] = CURSOR_DOWN_RELEASED_INDEX,
+	[0xD1] = PAGE_DOWN_RELEASED_INDEX,
+	[0xD2] = INSERT_RELEASED_INDEX,
+	[0xD3] = DELETE_RELEASED_INDEX,
+	[0xDB] = LEFT_GUI_RELEASED_INDEX,
+	[0xDC] = RIGHT_GUI_RELEASED_INDEX,
+	[0xDD] = APPS_RELEASED_INDEX,
+	[0xDE] = ACPI_POWER_RELEASED_INDEX,
+	[0xDF] = ACPI_SLEEP_RELEASED_INDEX,
+	[0xE3] = ACPI_WAKE_RELEASED_INDEX,
+	[0xE5] = MULTIMEDIA_WWW_SEARCH_RELEASED_INDEX,
+	[0xE6] = MULTIMEDIA_WWW_FAVORITES_RELEASED_INDEX,
+	[0xE7] = MULTIMEDIA_WWW_REFRESH_RELEASED_INDEX,
+	[0xE8] = MULTIMEDIA_WWW_STOP_RELEASED_INDEX,
+	[0xE9] = MULTIMEDIA_WWW_FORWARD_RELEASED_INDEX,
+	[0xEA] = MULTIMEDIA_WWW_BACK_RELEASED_INDEX,
+	[0xEB] = MULTIMEDIA_MY_COMPUTER_RELEASED_INDEX,
+	[0xEC] = MULTIMEDIA_EMAIL_RELEASED_INDEX,
+	[0xED] = MULTIMEDIA_MEDIA_SELECT_RELEASED_INDEX,
+};
+
+int get_keyboard_index(u8 scancode)
 {
-	switch (scancode) {
-		case LEFT_ARROW:
-			if (input_mode == INPUT_MODE_NORMAL && screen_context.desktops[screen_context.desktop_index].cursor.x > 0)
-				decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
-			else if (input_mode == INPUT_MODE_MINISHELL && screen_context.desktops[screen_context.desktop_index].cursor.x > 1)
-				decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
-			break;
-		case RIGHT_ARROW:
-			increment_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
-			break;
-		case UP_ARROW:
-			if (input_mode == INPUT_MODE_NORMAL)
-				set_cursor_on_upper_line(&screen_context.desktops[screen_context.desktop_index].cursor);
-			break;
-		case DOWN_ARROW:
-			if (input_mode == INPUT_MODE_NORMAL)
-				set_cursor_on_next_line(&screen_context.desktops[screen_context.desktop_index].cursor);
-			break;
-		default:
-			print_k(KERN_ERR "Unknown arrow key scancode: %d\n", scancode);
-			break;
+	static u8 extended_byte = 0;
+	if (scancode == 0xE0 || scancode == 0xE1) {
+		extended_byte = scancode;
+		return 0;
 	}
-}
-
-static int handle_special_key(unsigned char scancode)
-{
-	if (scancode == LEFT_ARROW || scancode == RIGHT_ARROW || scancode == UP_ARROW || scancode == DOWN_ARROW) {
-		handle_keyboard_arrow(scancode);
-		return 1;
+	if (extended_byte == 0xE0) {
+		extended_byte = 0;
+		return extended_e0_map[scancode];
 	}
-	
-	switch (scancode) {
-		case SCANCODE_LSHIFT:
-			left_shift_pressed = 1;
-			special_keys |= SHIFT_PRESSED;
-			return 1;
-		case SCANCODE_RSHIFT:
-			right_shift_pressed = 1;
-			special_keys |= SHIFT_PRESSED;
-			return 1;
-		case (SCANCODE_LSHIFT | 0x80):
-			left_shift_pressed = 0;
-			if (!right_shift_pressed)
-				special_keys &= ~SHIFT_PRESSED;
-			return 1;
-		case (SCANCODE_RSHIFT | 0x80):
-			right_shift_pressed = 0;
-			if (!left_shift_pressed)
-				special_keys &= ~SHIFT_PRESSED;
-			return 1;
-		case SCANCODE_CAPS_LOCK:
-			special_keys ^= CAPS_LOCK;
-			return 1;
-		case BACKSPACE:
-			if (screen_context.desktops[screen_context.desktop_index].cursor.x > 0 && input_mode == INPUT_MODE_NORMAL ||
-				(screen_context.desktops[screen_context.desktop_index].cursor.x > 1 && input_mode == INPUT_MODE_MINISHELL)) 
-			{
-				if (input_mode == INPUT_MODE_MINISHELL)
-					writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 2] = 0; // Clear the last character in the buffer -2 bc cursor is at pos + 1 and  +1 for ">" 
-				decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
-				kfs_clear_cursor_cell(&screen_context);
-			}
-			return 1;
-		default:
-			return 0;
-	}
+	extended_byte = 0;
+	return simple_keys_map[scancode];
 }
 
 void handle_keyboard_inputs(t_char_stacked_queue *queue)
 {
 	while (!queue_is_empty(queue)) {
-		unsigned char scancode = queue_pop(queue);
-		if (input_mode == INPUT_MODE_DISABLED) {
-			continue;
+		u8	scancode	   = queue_pop(queue);
+		u16 keyboard_index = get_keyboard_index(scancode);
+		if (keyboard_index == 0) {
+			return;
 		}
-
-		if (input_mode == INPUT_MODE_NORMAL) {
-			if (handle_special_key(scancode)) {
-				return;
-			}
-
-			char c = scancode_to_char(scancode, special_keys);
-			if (c == '\\')
-			{
-				launch_mini_minishell(); // Initialize the mini minishell
-				input_mode = INPUT_MODE_MINISHELL; // Switch to mini minishell mode when pressing \ key
-				kfs_write_char(&screen_context, '>');
-			}
-			else if (c) {
-				kfs_write_char(&screen_context, c);
-				kfs_clear_cursor_cell(&screen_context);
-			}
-		}
-
-		else if (input_mode == INPUT_MODE_MINISHELL)
-		{
-			if (handle_special_key(scancode)) {
-				return;
-			}
-
-			char c = scancode_to_char(scancode, special_keys);
-			if (c) {
-				if (c == '\n') {
-					writeds_char[80] = c; // Store the newline character
-					writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x] = 0; // Null-terminate the string
-					handle_input(writeds_char); // Process the input
-					for (int i = 0; i < 80; i++) {
-						writeds_char[i] = 0; // Clear the buffer
-					}
-					if (get_input_mode() == INPUT_MODE_MINISHELL) {
-						kfs_write_char(&screen_context, '>'); // Print the prompt again
-					}
-				} else {
-					writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 1] = c; // -1 is bc cursor is at the next position bc of "> "" 
-					kfs_write_char(&screen_context, c);
-				}
-				kfs_clear_cursor_cell(&screen_context);
-			}
-		}
-		else {
-			print_k(KERN_ERR "Unknown input mode: %d\n", input_mode);
+		switch (input_mode) {
+			case INPUT_MODE_DISABLED:
+				break;
+			case INPUT_MODE_NORMAL:
+			case INPUT_MODE_MINISHELL:
+				handle_keyboard_text_mode(keyboard_index);
+				break;
+			default:
+				break;
 		}
 	}
 }
 
 void set_input_mode(u8 mode)
 {
-	if (mode == INPUT_MODE_NORMAL || mode == INPUT_MODE_MINISHELL) {
+	if (mode == INPUT_MODE_NORMAL) {
 		kfs_clear_cursor_cell(&screen_context);
 	}
 	input_mode = mode;

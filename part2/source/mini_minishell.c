@@ -26,6 +26,7 @@ void launch_mini_minishell(void) {
     // For now, we will just print a message to the screen.
     print_f("\nWelcome to the Mini Minishell!\n");
 	print_f("Type 'help' for a list of commands.\n");
+    kfs_write_char(&screen_context, '>'); // Print the prompt
 }
 
 static inline void reboot() {

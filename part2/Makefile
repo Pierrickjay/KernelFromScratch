@@ -21,12 +21,12 @@ C_FILES = main.c \
 	keyboard_interrupts.c \
 	char_stacked_queue.c \
 	keyboard_input.c \
-	keyboard_map.c \
+	keyboard_text_mode_map.c \
 	tests.c \
 	serial.c \
 	gdt.c \
 	mini_minishell.c \
-	string.c \
+	string.c
 
 ASM_FILES = boot.asm \
 	interrupt_handlers.asm \

@@ -62,9 +62,6 @@ void kfs_write_colored_char(t_screen_context *ctx, unsigned char c, unsigned cha
 void kfs_write_char(t_screen_context *ctx, unsigned char c)
 {
 	kfs_write_colored_char(ctx, c, ctx->color);
-	// print_serial("cursor at pos = (%d, %d)\n",
-	// 			 ctx->desktops[ctx->desktop_index].cursor.x,
-	// 			 ctx->desktops[ctx->desktop_index].cursor.y);
 }
 
 void kfs_clear_cursor_cell(t_screen_context *ctx)
@@ -75,10 +72,10 @@ void kfs_clear_cursor_cell(t_screen_context *ctx)
 
 void clear_screen_colored(t_screen_context *ctx, unsigned char color)
 {
-	set_cursor(&ctx->desktops[ctx->desktop_index].cursor, (t_position){0, 0});
 	for (int index = 0; index < SCREEN_CELLS_SIZE; index++) {
 		kfs_write_colored_char(ctx, ' ', color);
 	}
+	set_cursor(&ctx->desktops[ctx->desktop_index].cursor, (t_position){0, 0});
 }
 
 void clear_screen(t_screen_context *ctx)
@@ -106,7 +103,32 @@ unsigned char get_color_value(const char *name) {
     return WHITE; // Default to white if color not found // maybe change this to an error value
 }
 
-void scroll_screen(t_screen_context *ctx)
+void scroll_screen_up(t_screen_context *ctx)
+{
+	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
+
+	// Move all lines down by one
+	for (int y = H_SCREEN - 1; y > 0; y--) {
+		for (int x = 0; x < L_SCREEN; x++) {
+			desktop->cells[x][y] = desktop->cells[x][y - 1];
+
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
+			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
+		}
+	}
+
+	// Clear the first line
+	for (int x = 0; x < L_SCREEN; x++) {
+		desktop->cells[x][0] = (t_character_cell){ctx->color, ' '};
+
+		unsigned long vga_index		   = (0 * L_SCREEN + x) * 2;
+		ctx->vga_buffer[vga_index]	   = ' ';
+		ctx->vga_buffer[vga_index + 1] = ctx->color;
+	}
+}
+
+void scroll_screen_down(t_screen_context *ctx)
 {
 	t_desktop *desktop = &ctx->desktops[ctx->desktop_index];
 
@@ -117,8 +139,8 @@ void scroll_screen(t_screen_context *ctx)
 			desktop->cells[x][y] = desktop->cells[x][y + 1];
 
 			// Update the VGA buffer
-			unsigned long vga_index = (y * L_SCREEN + x) * 2;
-			ctx->vga_buffer[vga_index] = desktop->cells[x][y].character;
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
 			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
 		}
 	}
@@ -128,8 +150,26 @@ void scroll_screen(t_screen_context *ctx)
 		desktop->cells[x][H_SCREEN - 1] = (t_character_cell){ctx->color, ' '};
 
 		// Update the VGA buffer for the last line
-		unsigned long vga_index = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
-		ctx->vga_buffer[vga_index] = ' ';
+		unsigned long vga_index		   = ((H_SCREEN - 1) * L_SCREEN + x) * 2;
+		ctx->vga_buffer[vga_index]	   = ' ';
 		ctx->vga_buffer[vga_index + 1] = ctx->color;
 	}
+}
+
+void load_desktop_to_vga_buffer(t_screen_context *ctx, unsigned char desktop_index)
+{
+	t_desktop *desktop = &ctx->desktops[desktop_index];
+	for (int y = 0; y < H_SCREEN; y++) {
+		for (int x = 0; x < L_SCREEN; x++) {
+			unsigned long vga_index		   = (y * L_SCREEN + x) * 2;
+			ctx->vga_buffer[vga_index]	   = desktop->cells[x][y].character;
+			ctx->vga_buffer[vga_index + 1] = desktop->cells[x][y].color;
+		}
+	}
+}
+
+void change_desktop(t_screen_context *ctx, unsigned char desktop_index)
+{
+	ctx->desktop_index = desktop_index;
+	load_desktop_to_vga_buffer(ctx, desktop_index);
 }

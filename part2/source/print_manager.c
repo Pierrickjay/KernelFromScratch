@@ -57,15 +57,6 @@ int print_hex(int hex, int writed_char)
 	return (writed_char + 1);
 }
 
-void print_hex_serial(int hex)
-{
-	if (hex > HEX_BASE_SIZE - 1) {
-		print_hex_serial(hex / HEX_BASE_SIZE);
-		hex %= HEX_BASE_SIZE;
-	}
-	serial_write_char(SERIAL_COM1_BASE, HEX_DIGITS[hex]);
-}
-
 int print_f(char *str, ...)
 {
 	int	 *args;
@@ -102,8 +93,8 @@ int print_f(char *str, ...)
 					args++;
 					total_print++;
 					break;
-				case 'x': 
-					total_print += print_hex(*args++, 0); // 0 is the initial writed_char count
+				case 'x':
+					total_print += print_hex(*args++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
@@ -165,7 +156,7 @@ int print_k(const char *format, ...)
 					total_print++;
 					break;
 				case 'x':
-					total_print += print_hex(*arg_ptr++, 0); // 0 is the initial writed_char count
+					total_print += print_hex(*arg_ptr++, 0);
 					break;
 				default:
 					kfs_write_char(&screen_context, '%');
@@ -182,51 +173,7 @@ int print_k(const char *format, ...)
 	}
 	return total_print;
 }
-
-void print_serial(char *str, ...)
-{
-	int	 *args;
-	char *format;
-	int	  i = 0;
-	char  tmp_addr[9];
-
-	args   = (int *)(&str);		// pointer of args
-	format = (char *)(*args++); // Pointer to char in first string
-	i	   = 0;
-
-	while (*format) {
-		if (*format == '%') {
-			format++;
-			switch (*format) {
-				case '%':
-					serial_write_char(SERIAL_COM1_BASE, '%');
-					break;
-				case 'd':
-					serial_print_number(SERIAL_COM1_BASE, *args++);
-					break;
-				case 's':
-					serial_write_string(SERIAL_COM1_BASE, *((char **)args++));
-					break;
-				case 'c':
-					serial_write_char(SERIAL_COM1_BASE, *args);
-					args++;					
-					break;
-				case 'x':
-					print_hex_serial(*args++);
-					break;
-				default:
-					serial_write_char(SERIAL_COM1_BASE, '%');
-					serial_write_char(SERIAL_COM1_BASE, *format);
-					break;
-			}
-		}
-		else {
-			serial_write_char(SERIAL_COM1_BASE, *format);			
-		}
-		format++;
-	}
-}
-
+ 
 void print_kernel_stack(int num_entries) {
     unsigned int *esp;
     unsigned int i;

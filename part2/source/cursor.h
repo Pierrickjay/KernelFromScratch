@@ -3,7 +3,6 @@
 
 #include "types.h"
 #include "utils.h"
-#include "keyboard_input.h"
 
 #define CURSOR_PORT_CMD 0x3D4
 #define CURSOR_PORT_DATA 0x3D5
