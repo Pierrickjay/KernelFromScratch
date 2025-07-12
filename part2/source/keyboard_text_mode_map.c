@@ -2,7 +2,6 @@
 #include "keyboard_input.h"
 #include "print_manager.h"
 
-
 #define KEY_HANDLED 0
 
 static u8 special_keys		  = 0;
@@ -14,9 +13,11 @@ static char writeds_char[80] = {0}; // buffer for writeds command
 static u16 handle_left_arrow(void)
 {
 	int input_mode = get_input_mode();
-	if (input_mode == INPUT_MODE_NORMAL && screen_context.desktops[screen_context.desktop_index].cursor.x > 0)
+	if (input_mode == INPUT_MODE_NORMAL &&
+		screen_context.desktops[screen_context.desktop_index].cursor.x > 0)
 		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
-	else if (input_mode == INPUT_MODE_MINISHELL && screen_context.desktops[screen_context.desktop_index].cursor.x > 1)
+	else if (input_mode == INPUT_MODE_MINISHELL &&
+			 screen_context.desktops[screen_context.desktop_index].cursor.x > 1)
 		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
 	return KEY_HANDLED;
 }
@@ -102,11 +103,14 @@ static u16 handle_f4(void)
 static u16 handle_backspace(void)
 {
 	int input_mode = get_input_mode();
-	if (screen_context.desktops[screen_context.desktop_index].cursor.x > 0 && input_mode == INPUT_MODE_NORMAL ||
-				(screen_context.desktops[screen_context.desktop_index].cursor.x > 1 && input_mode == INPUT_MODE_MINISHELL)) 
-	{
+	if (screen_context.desktops[screen_context.desktop_index].cursor.x > 0 &&
+			input_mode == INPUT_MODE_NORMAL ||
+		(screen_context.desktops[screen_context.desktop_index].cursor.x > 1 &&
+		 input_mode == INPUT_MODE_MINISHELL)) {
 		if (input_mode == INPUT_MODE_MINISHELL)
-			writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 2] = 0; // Clear the last character in the buffer -2 bc cursor is at pos + 1 and  +1 for ">" 
+			writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 2] =
+				0; // Clear the last character in the buffer -2 bc cursor is at pos + 1 and  +1 for
+				   // ">"
 		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
 		kfs_clear_cursor_cell(&screen_context);
 	}
@@ -178,30 +182,36 @@ char convert_keyboard_index_to_ascii(u16 keyboard_index)
 
 void handle_ascii_char(u16 keyboard_index)
 {
-	int input_mode = get_input_mode();
-	char c = convert_keyboard_index_to_ascii(keyboard_index);
+	int	 input_mode = get_input_mode();
+	char c			= convert_keyboard_index_to_ascii(keyboard_index);
 	if (c) {
-		if (c == '\\' && input_mode == INPUT_MODE_NORMAL)
-		{
+		if (c == '\\' && input_mode == INPUT_MODE_NORMAL) {
 			launch_mini_minishell();
 			set_input_mode(INPUT_MODE_MINISHELL);
 			return;
 		}
-		if (input_mode == INPUT_MODE_MINISHELL)
-		{
-			if (c == '\n')
-			{
-				writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 1] = 0; // null terminated the last character
+		if (input_mode == INPUT_MODE_MINISHELL) {
+			if (c == '\n') {
+				writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 1] =
+					0; // null terminated the last character
 				handle_input(writeds_char);
 				for (int i = 0; i < 80; i++)
 					writeds_char[i] = 0; // Clear the buffer
 				if (get_input_mode() == INPUT_MODE_MINISHELL) {
-					kfs_write_char(&screen_context, '>'); // need to check again bc can change in handle_input
+					kfs_write_char(&screen_context,
+								   '>');
 					return;
 				}
 			}
-			else
-				writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 1] = c;
+			else {
+				if (screen_context.desktops[screen_context.desktop_index].cursor.x < 79) {
+					writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x -
+								 1] = c;
+				}
+				else {
+					return;
+				}
+			}
 		}
 		kfs_write_char(&screen_context, c);
 		kfs_clear_cursor_cell(&screen_context);
@@ -214,6 +224,6 @@ void handle_keyboard_text_mode(u16 keyboard_index)
 
 	if (result == KEY_HANDLED)
 		return;
-	
+
 	handle_ascii_char(result);
 }

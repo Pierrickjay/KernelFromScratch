@@ -65,7 +65,7 @@ $(ISO_TARGET): $(CODE_TARGET)
 	mkdir -p $(OBJ_DIRECTORY)iso/boot/grub
 	cp $(CODE_TARGET) $(OBJ_DIRECTORY)iso/boot
 	cp $(GRUB_CFG) $(OBJ_DIRECTORY)iso/boot/grub/
-	grub-mkrescue -o $(ISO_TARGET) $(OBJ_DIRECTORY)iso/
+	grub-mkrescue --compress=xz --fonts= --themes= --locales= -o $(ISO_TARGET) $(OBJ_DIRECTORY)iso/
 
 $(CODE_TARGET): $(C_OBJ) $(ASM_OBJ)
 	$(LINKER) $(LINKER_OPTIONS) $(LINKER_FILE) -o $(CODE_TARGET) $(OBJ)
