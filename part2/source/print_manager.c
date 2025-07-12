@@ -133,7 +133,7 @@ int print_k(const char *format, ...)
 
 	// Use existing print_f logic with the specified color
 	char *fmt_copy = (char *)format;
-	int	 *arg_ptr  = (int *)(&args);
+	int	 *arg_ptr  = args;
 
 	set_color(&screen_context, color);
 	while (*fmt_copy) {
@@ -173,19 +173,20 @@ int print_k(const char *format, ...)
 	}
 	return total_print;
 }
- 
-void print_kernel_stack(int num_entries) {
-    unsigned int *esp;
-    unsigned int i;
-    
-    // Get the current stack pointer
-    asm volatile("mov %%esp, %0" : "=r"(esp));
+
+void print_kernel_stack(int num_entries)
+{
+	unsigned int *esp;
+	unsigned int  i;
+
+	// Get the current stack pointer
+	asm volatile("mov %%esp, %0" : "=r"(esp));
 
 	print_f("ESP = 0x%x\n", (unsigned int)esp);
-    print_f("Kernel Stack Dump (ESP = 0x%x):\n", (unsigned int)esp);
-    
-    // Print stack entries (memory above ESP)
-    for (i = 0; i < num_entries; i++) {
-        print_f("Stack[%d] = 0x%x\n", i, esp[i]);
-    }
+	print_f("Kernel Stack Dump (ESP = 0x%x):\n", (unsigned int)esp);
+
+	// Print stack entries (memory above ESP)
+	for (i = 0; i < num_entries; i++) {
+		print_f("Stack[%d] = 0x%x\n", i, esp[i]);
+	}
 }

@@ -13,32 +13,31 @@ static char writeds_char[80] = {0}; // buffer for writeds command
 static u16 handle_left_arrow(void)
 {
 	int input_mode = get_input_mode();
-	if (input_mode == INPUT_MODE_NORMAL &&
-		screen_context.desktops[screen_context.desktop_index].cursor.x > 0)
-		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
+	if (input_mode == INPUT_MODE_NORMAL && get_current_desktop(&screen_context)->cursor.x > 0)
+		decrement_cursor(&get_current_desktop(&screen_context)->cursor);
 	else if (input_mode == INPUT_MODE_MINISHELL &&
-			 screen_context.desktops[screen_context.desktop_index].cursor.x > 1)
-		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
+			 get_current_desktop(&screen_context)->cursor.x > 1)
+		decrement_cursor(&get_current_desktop(&screen_context)->cursor);
 	return KEY_HANDLED;
 }
 
 static u16 handle_right_arrow(void)
 {
-	increment_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
+	increment_cursor(&get_current_desktop(&screen_context)->cursor);
 	return KEY_HANDLED;
 }
 
 static u16 handle_up_arrow(void)
 {
 	if (get_input_mode() == INPUT_MODE_NORMAL)
-		set_cursor_on_upper_line(&screen_context.desktops[screen_context.desktop_index].cursor);
+		set_cursor_on_upper_line(&get_current_desktop(&screen_context)->cursor);
 	return KEY_HANDLED;
 }
 
 static u16 handle_down_arrow(void)
 {
 	if (get_input_mode() == INPUT_MODE_NORMAL)
-		set_cursor_on_next_line(&screen_context.desktops[screen_context.desktop_index].cursor);
+		set_cursor_on_next_line(&get_current_desktop(&screen_context)->cursor);
 	return KEY_HANDLED;
 }
 
@@ -103,15 +102,14 @@ static u16 handle_f4(void)
 static u16 handle_backspace(void)
 {
 	int input_mode = get_input_mode();
-	if (screen_context.desktops[screen_context.desktop_index].cursor.x > 0 &&
-			input_mode == INPUT_MODE_NORMAL ||
-		(screen_context.desktops[screen_context.desktop_index].cursor.x > 1 &&
+	if (get_current_desktop(&screen_context)->cursor.x > 0 && input_mode == INPUT_MODE_NORMAL ||
+		(get_current_desktop(&screen_context)->cursor.x > 1 &&
 		 input_mode == INPUT_MODE_MINISHELL)) {
 		if (input_mode == INPUT_MODE_MINISHELL)
-			writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 2] =
+			writeds_char[get_current_desktop(&screen_context)->cursor.x - 2] =
 				0; // Clear the last character in the buffer -2 bc cursor is at pos + 1 and  +1 for
 				   // ">"
-		decrement_cursor(&screen_context.desktops[screen_context.desktop_index].cursor);
+		decrement_cursor(&get_current_desktop(&screen_context)->cursor);
 		kfs_clear_cursor_cell(&screen_context);
 	}
 	return KEY_HANDLED;
@@ -192,21 +190,19 @@ void handle_ascii_char(u16 keyboard_index)
 		}
 		if (input_mode == INPUT_MODE_MINISHELL) {
 			if (c == '\n') {
-				writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x - 1] =
+				writeds_char[get_current_desktop(&screen_context)->cursor.x - 1] =
 					0; // null terminated the last character
 				handle_input(writeds_char);
 				for (int i = 0; i < 80; i++)
 					writeds_char[i] = 0; // Clear the buffer
 				if (get_input_mode() == INPUT_MODE_MINISHELL) {
-					kfs_write_char(&screen_context,
-								   '>');
+					kfs_write_char(&screen_context, '>');
 					return;
 				}
 			}
 			else {
-				if (screen_context.desktops[screen_context.desktop_index].cursor.x < 79) {
-					writeds_char[screen_context.desktops[screen_context.desktop_index].cursor.x -
-								 1] = c;
+				if (get_current_desktop(&screen_context)->cursor.x < 79) {
+					writeds_char[get_current_desktop(&screen_context)->cursor.x - 1] = c;
 				}
 				else {
 					return;

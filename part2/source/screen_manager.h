@@ -22,22 +22,16 @@
 #define BG(color) (color << 4)
 
 typedef struct {
-    const char *name;
-    int value;
+	const char *name;
+	int			value;
 } color_entry_t;
 
 static color_entry_t available_colors[] = {
-    {"black",      BLACK},
-    {"blue",       BLUE},
-    {"green",      GREEN},
-    {"red",        RED},
-    {"intensive",  INTENSIVE},
-    {"cyan",       CYAN},
-    {"yellow",     YELLOW},
-    {"magenta",    MAGENTA},
-    {"white",      WHITE},
+	{"black", BLACK},	{"blue", BLUE},			  {"green", GREEN},
+	{"red", RED},		{"intensive", INTENSIVE}, {"cyan", CYAN},
+	{"yellow", YELLOW}, {"magenta", MAGENTA},	  {"white", WHITE},
 };
-#define COLOR_COUNT (sizeof(available_colors)/sizeof(available_colors[0]))
+#define COLOR_COUNT (sizeof(available_colors) / sizeof(available_colors[0]))
 
 #define MAKE_ATTRIBUTE(fg, bg) (BG(bg) | fg)
 #define DEFAULT_ATTRIBUTE MAKE_ATTRIBUTE(WHITE, BLACK)
@@ -67,6 +61,7 @@ typedef struct s_character_cell {
 typedef struct s_desktop {
 	t_cursor		 cursor;					// private
 	t_character_cell cells[L_SCREEN][H_SCREEN]; // private
+	u8				 input_mode;				// private
 } t_desktop;
 
 #define DESKTOP_COUNT 4
@@ -98,6 +93,7 @@ void		  set_color(t_screen_context *ctx, unsigned char color);
 void scroll_screen_up(t_screen_context *ctx);
 void scroll_screen_down(t_screen_context *ctx);
 
-void change_desktop(t_screen_context *ctx, unsigned char desktop_index);
+t_desktop *get_current_desktop(t_screen_context *ctx);
+void	   change_desktop(t_screen_context *ctx, unsigned char desktop_index);
 
 #endif

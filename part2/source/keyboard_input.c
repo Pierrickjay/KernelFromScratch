@@ -1,9 +1,7 @@
 #include "keyboard_input.h"
 #include "keyboard_text_mode_map.h"
-#include "print_manager.h"
 #include "mini_minishell.h"
-
-static u8 input_mode = INPUT_MODE_DISABLED;
+#include "print_manager.h"
 
 static u16 simple_keys_map[256] = {
 	[0x01] = ESCAPE_PRESSED_INDEX,
@@ -281,7 +279,7 @@ void handle_keyboard_inputs(t_char_stacked_queue *queue)
 		if (keyboard_index == 0) {
 			return;
 		}
-		switch (input_mode) {
+		switch (get_current_desktop(&screen_context)->input_mode) {
 			case INPUT_MODE_DISABLED:
 				break;
 			case INPUT_MODE_NORMAL:
@@ -299,10 +297,10 @@ void set_input_mode(u8 mode)
 	if (mode == INPUT_MODE_NORMAL) {
 		kfs_clear_cursor_cell(&screen_context);
 	}
-	input_mode = mode;
+	get_current_desktop(&screen_context)->input_mode = mode;
 }
 
 char get_input_mode(void)
 {
-	return input_mode;
+	return get_current_desktop(&screen_context)->input_mode;
 }

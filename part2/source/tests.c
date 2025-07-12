@@ -129,7 +129,8 @@ void print_k_test()
 	print_k(KERN_CRIT "Critical condition detected\n");
 	print_k(KERN_ERR "An error occurred: %d\n", -1);
 	print_k(KERN_WARNING "Warning: low memory\n");
-	print_k(KERN_NOTICE "System initialization complete\n");
+	print_k(KERN_NOTICE "System initialization %s complete %s with %d seconds\n", "test",
+			"successfully", 123);
 	print_k(KERN_INFO "Starting process with PID %d\n", 12912);
 	print_k(KERN_DEBUG "Debug info: value = %x\n", 0x1234ABCD);
 }
@@ -149,7 +150,7 @@ void print_f_test()
 	int nb = 8;
 	print_f("ceci est un int test %d\n", 123);
 	print_f("ceci est un char test %c\n", 'C');
-	int test = print_f("ceci est un string test %s\n", "frefjreferf");
+	int test		= print_f("ceci est un string test %s\n", "frefjreferf");
 	int writed_char = print_f("ceci est un hex test %x\n", &nb);
 	print_f("nb of writed char: %d\n", writed_char);
 	print_string("Versiwfwfefewfwefewoweewefwefew\n");
@@ -159,14 +160,15 @@ void print_f_test()
 void main_tests()
 {
 	int nb = 8;
-	// clear_screen(&screen_context); // Commenting this 
+	// clear_screen(&screen_context); // Commenting this
 	set_color(&screen_context, BG(BLACK) | WHITE);
 	print_42();
 	// print_kernel_stack(16);
 	// print_f_test();
-	// print_k_test();
+	print_k_test();
 	// kfs_write_char(&screen_context, '\n');
 
 	// kfs_write_char(&screen_context, 'a');
-	// print_f("\n%d-%d\n", screen_context.desktops[0].cursor.x, screen_context.desktops[0].cursor.y);
+	// print_f("\n%d-%d\n", get_current_desktop(&screen_context)->cursor.x,
+	// 		get_current_desktop(&screen_context)->cursor.y);
 }
