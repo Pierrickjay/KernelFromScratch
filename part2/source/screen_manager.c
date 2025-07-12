@@ -1,7 +1,7 @@
 #include "screen_manager.h"
 #include "memory_manager.h"
-#include "print_manager.h"
 #include "mini_minishell.h"
+#include "print_manager.h"
 
 t_screen_context screen_context;
 
@@ -93,14 +93,17 @@ void set_color(t_screen_context *ctx, unsigned char color)
 	ctx->color = color;
 }
 
-unsigned char get_color_value(const char *name) {
-    for (size_t i = 0; i < COLOR_COUNT; ++i) {
-        if (strcmp(available_colors[i].name, name) == 0) {
-            return available_colors[i].value;
-        }
-    }
-	print_k(KERN_ERR "ERROR: color '%s' not found\nSwitching to white", name);
-    return WHITE; // Default to white if color not found // maybe change this to an error value
+unsigned char get_color_value(const char *name)
+{
+	for (size_t i = 0; i < COLOR_COUNT; ++i) {
+		if (strcmp(available_colors[i].name, name) == 0) {
+			print_f("\nColor changed to %s\n", name);
+			return available_colors[i].value;
+		}
+	}
+	print_k(KERN_ERR "\nERROR: color '%s' not found\nSwitching to white\n", name);
+	return WHITE; // Default to white if color not found // maybe change this to
+				  // an error value
 }
 
 void scroll_screen_up(t_screen_context *ctx)
