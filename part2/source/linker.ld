@@ -11,4 +11,10 @@ SECTIONS
    }
    .data : { *(.data) }
    .bss  : { *(.bss)  }
+
+   . = 0x00000800;
+   .gdt : {
+       gdt_start = .;
+       . += 56; /* Number of GDT entries * size of each entry */
+   }
  }

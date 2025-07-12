@@ -4,15 +4,14 @@
 // http://www.osdever.net/bkerndev/Docs/gdt.htm
 
 #define GDT_SIZE 7 // Number of GDT entries
-#define GDT_ADDRESS 0x00000800
 
-#define SEG_DESCTYPE(x) ((x) << 0x04)	 // Descriptor type (0 for system, 1 for code/data)
-#define SEG_PRES(x) ((x) << 0x07)		 // Present
-#define SEG_SAVL(x) ((x) << 0x0C)		 // Available for system use
-#define SEG_LONG(x) ((x) << 0x0D)		 // Long mode
-#define SEG_SIZE(x) ((x) << 0x0E)		 // Size (0 for 16-bit, 1 for 32)
-#define SEG_GRAN(x) ((x) << 0x0F)		 // Granularity (0 for 1B - 1MB, 1 for 4KB - 4GB)
-#define SEG_PRIV(x) (((x)&0x03) << 0x05) // Set privilege level (0 - 3)
+#define SEG_DESCTYPE(x) ((x) << 0x04)	   // Descriptor type (0 for system, 1 for code/data)
+#define SEG_PRES(x) ((x) << 0x07)		   // Present
+#define SEG_SAVL(x) ((x) << 0x0C)		   // Available for system use
+#define SEG_LONG(x) ((x) << 0x0D)		   // Long mode
+#define SEG_SIZE(x) ((x) << 0x0E)		   // Size (0 for 16-bit, 1 for 32)
+#define SEG_GRAN(x) ((x) << 0x0F)		   // Granularity (0 for 1B - 1MB, 1 for 4KB - 4GB)
+#define SEG_PRIV(x) (((x) & 0x03) << 0x05) // Set privilege level (0 - 3)
 
 #define SEG_DATA_RD 0x00		// Read-Only
 #define SEG_DATA_RDA 0x01		// Read-Only, accessed
@@ -68,8 +67,7 @@ https://stackoverflow.com/questions/5473189/what-is-a-packed-structure-in-c We p
 need to prevent compiler to do some optimization
 */
 
-typedef struct gdt_entry
-{
+typedef struct gdt_entry {
 	unsigned short limit_low;
 	unsigned short base_low;
 	unsigned char  base_middle;
@@ -78,8 +76,7 @@ typedef struct gdt_entry
 	unsigned char  base_high;
 } __attribute__((packed)) t_gdt_entry;
 
-typedef struct gdt_ptr
-{
+typedef struct gdt_ptr {
 	unsigned short limit; // The upper 16 bits of all selector limits
 	unsigned int   base;  // The address of the first gdt_entry_t struct.
 } __attribute__((packed)) t_gdt_ptr;
