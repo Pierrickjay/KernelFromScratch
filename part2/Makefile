@@ -56,11 +56,9 @@ ISO_TARGET = $(KERNEL_NAME)$(KERNEL_VERSION).iso
 all: $(ISO_TARGET)
 
 virtualisation: all
-	unset GTK_PATH
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
 
 log: all
-	unset GTK_PATH
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial file:kernel.log -monitor stdio
 
 $(ISO_TARGET): $(CODE_TARGET)
