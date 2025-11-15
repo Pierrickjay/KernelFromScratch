@@ -1,4 +1,5 @@
 #include "interrupts.h"
+#include "exception_handlers.h"
 #include "io.h"
 #include "keyboard_interrupts.h"
 #include "types.h"
@@ -26,29 +27,52 @@ void load_idt()
 
 void init_pic(void)
 {
-	// Initialisation PIC maître
-	outb(0x20, 0x11); // ICW1 : initialisation
-	outb(0x21, 0x20); // ICW2 : offset IDT (0x20)
-	outb(0x21, 0x04); // ICW3 : indique qu'il y a un PIC esclave (IRQ2)
-	outb(0x21, 0x01); // ICW4 : mode 8086
+	outb(0x20, 0x11);
+	outb(0x21, 0x20);
+	outb(0x21, 0x04);
+	outb(0x21, 0x01);
 
-	// Initialisation PIC esclave
-	outb(0xA0, 0x11); // ICW1 : initialisation
-	outb(0xA1, 0x28); // ICW2 : offset IDT pour l'esclave (0x28)
-	outb(0xA1, 0x02); // ICW3 : indique sa position d'esclave (cascade IRQ2)
-	outb(0xA1, 0x01); // ICW4 : mode 8086
+	outb(0xA0, 0x11);
+	outb(0xA1, 0x28);
+	outb(0xA1, 0x02);
+	outb(0xA1, 0x01);
 
-	// Masques : Activer uniquement le clavier (IRQ1)
-	outb(0x21, 0xFD); // 11111101 : IRQ1 (clavier) activée, reste masqué
-	outb(0xA1, 0xFF); // Masque tout côté esclave
+	outb(0x21, 0xFD);
+	outb(0xA1, 0xFF);
+}
+
+static void register_cpu_exceptions(void)
+{
+	set_idt_gate(0, (u32)isr0);
+	set_idt_gate(1, (u32)isr1);
+	set_idt_gate(2, (u32)isr2);
+	set_idt_gate(3, (u32)isr3);
+	set_idt_gate(4, (u32)isr4);
+	set_idt_gate(5, (u32)isr5);
+	set_idt_gate(6, (u32)isr6);
+	set_idt_gate(7, (u32)isr7);
+	set_idt_gate(8, (u32)isr8);
+	set_idt_gate(9, (u32)isr9);
+	set_idt_gate(10, (u32)isr10);
+	set_idt_gate(11, (u32)isr11);
+	set_idt_gate(12, (u32)isr12);
+	set_idt_gate(13, (u32)isr13);
+	set_idt_gate(14, (u32)isr14);
+	set_idt_gate(15, (u32)isr15);
+	set_idt_gate(16, (u32)isr16);
+	set_idt_gate(17, (u32)isr17);
+	set_idt_gate(18, (u32)isr18);
+	set_idt_gate(19, (u32)isr19);
 }
 
 void init_interrupts(void)
 {
+	init_exception_handlers();
 	init_pic();
 
+	register_cpu_exceptions();
 	set_idt_gate(0x21, (u32)keyboard_handler);
-	load_idt();
 
+	load_idt();
 	asm volatile("sti");
 }

@@ -46,7 +46,8 @@
 		"keyboard_text_mode_map.h": "c",
 		"keyboard_input.h": "c",
 		"char_stacked_queue.h": "c",
-		"keyboard_indexes.h": "c"
+		"keyboard_indexes.h": "c",
+		"keyboard_interrupts.h": "c"
 	},
 	"editor.tabSize": 4,
 	"prettier.useTabs": true,
