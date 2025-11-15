@@ -29,6 +29,7 @@ C_FILES = main.c \
 	lib/utils.c \
 	cpu/interrupts.c \
 	cpu/exception_handlers.c \
+	cpu/panic.c \
 	drivers/keyboard/keyboard_interrupts.c \
 	lib/char_stacked_queue.c \
 	drivers/keyboard/keyboard_input.c \

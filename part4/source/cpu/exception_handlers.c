@@ -1,4 +1,5 @@
 #include "exception_handlers.h"
+#include "panic.h"
 #include "print_manager.h"
 
 #define MAX_EXCEPTION_HANDLERS 32
@@ -26,15 +27,6 @@ static const char *exception_names[] = {"Division By Zero",
 										"Machine Check",
 										"SIMD Floating Point Exception"};
 
-static void print_register_dump(t_registers *regs)
-{
-	print_k("<1>EAX=%x EBX=%x ECX=%x EDX=%x\n", regs->eax, regs->ebx, regs->ecx, regs->edx);
-	print_k("<1>ESI=%x EDI=%x EBP=%x ESP=%x\n", regs->esi, regs->edi, regs->ebp, regs->esp);
-	print_k("<1>EIP=%x CS=%x EFLAGS=%x\n", regs->eip, regs->cs, regs->eflags);
-	print_k("<1>DS=%x ES=%x FS=%x GS=%x\n", (u16)regs->ds, (u16)regs->es, (u16)regs->fs,
-			(u16)regs->gs);
-}
-
 static void default_exception_handler(t_registers *regs)
 {
 	const char *name = "Unknown Exception";
@@ -43,26 +35,16 @@ static void default_exception_handler(t_registers *regs)
 		name = exception_names[regs->int_no];
 	}
 
-	print_k("<0>*** CPU EXCEPTION %x: %s ***\n", regs->int_no, name);
-
 	if (regs->int_no == CPU_EXCEPTION_PAGE_FAULT) {
 		u32 faulting_address;
 		asm volatile("mov %%cr2, %0" : "=r"(faulting_address));
-		print_k("<1>Faulting address: %x\n", faulting_address);
+		print_k("<0>Exception %x: %s at address %x\n", regs->int_no, name, faulting_address);
+	}
+	else {
+		print_k("<0>Exception %x: %s\n", regs->int_no, name);
 	}
 
-	if (regs->err_code != 0) {
-		print_k("<1>Error code: %x\n", regs->err_code);
-	}
-
-	print_register_dump(regs);
-
-	print_k("<0>System halted.\n");
-
-	asm volatile("cli");
-	while (1) {
-		asm volatile("hlt");
-	}
+	panic_with_registers(name, regs);
 }
 
 void exception_dispatcher(t_registers *regs)
