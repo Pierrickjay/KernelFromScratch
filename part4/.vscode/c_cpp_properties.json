@@ -1,0 +1,25 @@
+{
+	"configurations": [
+		{
+			"name": "Linux",
+			"includePath": [
+				"${workspaceFolder}/source",
+				"${workspaceFolder}/source/boot",
+				"${workspaceFolder}/source/cpu",
+				"${workspaceFolder}/source/drivers/keyboard",
+				"${workspaceFolder}/source/drivers/serial",
+				"${workspaceFolder}/source/io",
+				"${workspaceFolder}/source/display",
+				"${workspaceFolder}/source/shell",
+				"${workspaceFolder}/source/lib",
+				"${workspaceFolder}/source/tests"
+			],
+			"defines": [],
+			"compilerPath": "/usr/bin/gcc",
+			"cStandard": "c11",
+			"cppStandard": "c++17",
+			"intelliSenseMode": "linux-gcc-x86"
+		}
+	],
+	"version": 4
+}

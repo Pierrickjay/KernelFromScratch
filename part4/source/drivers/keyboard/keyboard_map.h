@@ -9,22 +9,22 @@
 
 #define BACKSPACE 0x0E
 
-// États des touches spéciales
+// etats des touches speciales
 #define SHIFT_PRESSED 0x1
 #define CAPS_LOCK 0x2
 
-// Scancodes pour les touches spéciales
+// Scancodes pour les touches speciales
 #define SCANCODE_LSHIFT 0x2A
 #define SCANCODE_RSHIFT 0x36
 #define SCANCODE_CAPS_LOCK 0x3A
 
-// Table de conversion scancode -> caractère (sans shift)
+// Table de conversion scancode -> caractere (sans shift)
 extern const char scancode_to_ascii[];
 
-// Table de conversion scancode -> caractère (avec shift)
+// Table de conversion scancode -> caractere (avec shift)
 extern const char scancode_to_ascii_shift[];
 
-// Fonction pour convertir un scancode en caractère
+// Fonction pour convertir un scancode en caractere
 char scancode_to_char(u8 scancode, u8 special_keys);
 
 #endif

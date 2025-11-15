@@ -6,6 +6,7 @@ C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefau
 	-I$(SRC_DIRECTORY)cpu \
 	-I$(SRC_DIRECTORY)drivers/keyboard \
 	-I$(SRC_DIRECTORY)drivers/serial \
+	-I$(SRC_DIRECTORY)drivers/timer \
 	-I$(SRC_DIRECTORY)io \
 	-I$(SRC_DIRECTORY)display \
 	-I$(SRC_DIRECTORY)shell \
@@ -28,9 +29,13 @@ C_FILES = main.c \
 	io/io.c \
 	lib/utils.c \
 	cpu/interrupts.c \
+	cpu/signal_handler.c \
+	cpu/signal_scheduler.c \
+	cpu/signal_handlers.c \
 	cpu/exception_handlers.c \
 	cpu/panic.c \
 	drivers/keyboard/keyboard_interrupts.c \
+	drivers/timer/timer.c \
 	lib/char_stacked_queue.c \
 	drivers/keyboard/keyboard_input.c \
 	drivers/keyboard/keyboard_text_mode_map.c \
@@ -95,6 +100,7 @@ $(OBJ_DIRECTORY):
 		$(OBJ_DIRECTORY)cpu \
 		$(OBJ_DIRECTORY)drivers/keyboard \
 		$(OBJ_DIRECTORY)drivers/serial \
+		$(OBJ_DIRECTORY)drivers/timer \
 		$(OBJ_DIRECTORY)io \
 		$(OBJ_DIRECTORY)display \
 		$(OBJ_DIRECTORY)shell \

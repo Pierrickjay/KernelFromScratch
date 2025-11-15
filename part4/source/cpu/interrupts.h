@@ -21,4 +21,8 @@ typedef struct idt_ptr {
 
 void init_interrupts(void);
 
+// Handlers ASM
+extern void timer_handler(void);
+extern void keyboard_handler(void);
+
 #endif

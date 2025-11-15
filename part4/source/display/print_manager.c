@@ -70,7 +70,7 @@ int print_f(char *str, ...)
 	i	   = 0;
 	while (format[i]) {
 		if (format[i] == '%') {
-			if (format[i + 1] == '\0') // Si % est le dernier caractère
+			if (format[i + 1] == '\0') // Si % est le dernier caractere
 			{
 				kfs_write_char(&screen_context, '%');
 				total_print++;
