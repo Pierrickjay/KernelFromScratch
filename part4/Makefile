@@ -28,6 +28,7 @@ C_FILES = main.c \
 	io/io.c \
 	lib/utils.c \
 	cpu/interrupts.c \
+	cpu/exception_handlers.c \
 	drivers/keyboard/keyboard_interrupts.c \
 	lib/char_stacked_queue.c \
 	drivers/keyboard/keyboard_input.c \
@@ -41,6 +42,7 @@ C_FILES = main.c \
 
 ASM_FILES = boot/boot.asm \
 	cpu/interrupt_handlers.asm \
+	cpu/exception_stubs.asm \
 	cpu/gdt_flush.asm
 
 LINKER_FILE = $(SRC_DIRECTORY)boot/linker.ld

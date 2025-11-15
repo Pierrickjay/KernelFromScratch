@@ -157,18 +157,21 @@ void print_f_test()
 	print_number(test);
 }
 
+void test_division_by_zero(void)
+{
+	print_k("<2>Testing division by zero exception...\n");
+	volatile int a = 42;
+	volatile int b = 0;
+	volatile int c = a / b;
+	print_k("<2>This should never print: %d\n", c);
+}
+
 void main_tests()
 {
 	int nb = 8;
-	// clear_screen(&screen_context); // Commenting this
 	set_color(&screen_context, BG(BLACK) | WHITE);
 	print_42();
-	// print_kernel_stack(16);
-	// print_f_test();
 	print_k_test();
-	// kfs_write_char(&screen_context, '\n');
 
-	// kfs_write_char(&screen_context, 'a');
-	// print_f("\n%d-%d\n", get_current_desktop(&screen_context)->cursor.x,
-	// 		get_current_desktop(&screen_context)->cursor.y);
+	test_division_by_zero();
 }
