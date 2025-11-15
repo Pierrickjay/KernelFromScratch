@@ -31,7 +31,8 @@ static void print_register_dump(t_registers *regs)
 	print_k("<1>EAX=%x EBX=%x ECX=%x EDX=%x\n", regs->eax, regs->ebx, regs->ecx, regs->edx);
 	print_k("<1>ESI=%x EDI=%x EBP=%x ESP=%x\n", regs->esi, regs->edi, regs->ebp, regs->esp);
 	print_k("<1>EIP=%x CS=%x EFLAGS=%x\n", regs->eip, regs->cs, regs->eflags);
-	print_k("<1>DS=%x ES=%x FS=%x GS=%x\n", regs->ds, regs->es, regs->fs, regs->gs);
+	print_k("<1>DS=%x ES=%x FS=%x GS=%x\n", (u16)regs->ds, (u16)regs->es, (u16)regs->fs,
+			(u16)regs->gs);
 }
 
 static void default_exception_handler(t_registers *regs)
@@ -59,7 +60,9 @@ static void default_exception_handler(t_registers *regs)
 	print_k("<0>System halted.\n");
 
 	asm volatile("cli");
-	asm volatile("hlt");
+	while (1) {
+		asm volatile("hlt");
+	}
 }
 
 void exception_dispatcher(t_registers *regs)

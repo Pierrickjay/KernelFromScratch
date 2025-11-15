@@ -62,13 +62,13 @@ isr_common_stub:
     ; Now we must not be here but... we are, so we need to restore the segment registers
     pop eax
     pop eax
-    mov gs, ax
+    mov gs, eax
     pop eax
-    mov fs, ax
+    mov fs, eax
     pop eax
-    mov es, ax
+    mov es, eax
     pop eax
-    mov ds, ax
+    mov ds, eax
 
     popa
     add esp, 8
