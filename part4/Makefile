@@ -6,6 +6,7 @@ C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefau
 	-I$(SRC_DIRECTORY)cpu \
 	-I$(SRC_DIRECTORY)drivers/keyboard \
 	-I$(SRC_DIRECTORY)drivers/serial \
+	-I$(SRC_DIRECTORY)drivers/timer \
 	-I$(SRC_DIRECTORY)io \
 	-I$(SRC_DIRECTORY)display \
 	-I$(SRC_DIRECTORY)shell \
@@ -28,9 +29,13 @@ C_FILES = main.c \
 	io/io.c \
 	lib/utils.c \
 	cpu/interrupts.c \
+	cpu/signal_handler.c \
+	cpu/signal_scheduler.c \
+	cpu/signal_handlers.c \
 	cpu/exception_handlers.c \
 	cpu/panic.c \
 	drivers/keyboard/keyboard_interrupts.c \
+	drivers/timer/timer.c \
 	lib/char_stacked_queue.c \
 	drivers/keyboard/keyboard_input.c \
 	drivers/keyboard/keyboard_text_mode_map.c \
@@ -67,7 +72,12 @@ CODE_TARGET = $(OBJ_DIRECTORY)$(KERNEL_NAME)$(KERNEL_VERSION)
 ISO_TARGET = $(KERNEL_NAME)$(KERNEL_VERSION).iso
 
 # Rules
-all: $(ISO_TARGET)
+all: compile_commands.json $(ISO_TARGET)
+
+# Regenerate compile_commands.json when Makefile or source files change
+compile_commands.json: Makefile $(addprefix $(SRC_DIRECTORY), $(C_FILES))
+	@echo "Regenerating compile_commands.json..."
+	@bear -- $(MAKE) --no-print-directory re > /dev/null 2>&1 || true
 
 virtualisation: all
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
@@ -90,6 +100,7 @@ $(OBJ_DIRECTORY):
 		$(OBJ_DIRECTORY)cpu \
 		$(OBJ_DIRECTORY)drivers/keyboard \
 		$(OBJ_DIRECTORY)drivers/serial \
+		$(OBJ_DIRECTORY)drivers/timer \
 		$(OBJ_DIRECTORY)io \
 		$(OBJ_DIRECTORY)display \
 		$(OBJ_DIRECTORY)shell \
@@ -110,7 +121,7 @@ clean:
 	rm -rf $(OBJ_DIRECTORY)
 
 fclean : clean
-	rm -rf $(ISO_TARGET)
+	rm -rf $(ISO_TARGET) compile_commands.json
 
 re: fclean all
 

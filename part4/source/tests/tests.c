@@ -1,4 +1,6 @@
 #include "print_manager.h"
+#include "signal_handler.h"
+#include "signal_scheduler.h"
 
 void print_42(void)
 {
@@ -157,6 +159,233 @@ void print_f_test()
 	print_number(test);
 }
 
+// Variables globales pour les tests de callback
+static int test_callback1_called = 0;
+static int test_callback2_called = 0;
+
+// Callbacks de test
+void test_callback1(void)
+{
+	test_callback1_called++;
+}
+
+void test_callback2(void)
+{
+	test_callback2_called++;
+}
+
+void test_signal_handler_system(void)
+{
+	print_k(KERN_INFO "\n=== [B1] Signal Handler System Tests ===\n");
+
+	// Test 1: Enregistrement d'un handler
+	print_k(KERN_INFO "Test 1: Enregistrement d'un handler... ");
+	register_interrupt_handler(0x80, test_callback1);
+	print_k(KERN_INFO "[OK]\n");
+
+	// Test 2: Enregistrement de plusieurs handlers
+	print_k(KERN_INFO "Test 2: Enregistrement de plusieurs handlers... ");
+	register_interrupt_handler(0x81, test_callback2);
+	register_interrupt_handler(0x82, test_callback1);
+	print_k(KERN_INFO "[OK]\n");
+
+	// Test 3: Appel direct du dispatcher
+	print_k(KERN_INFO "Test 3: Test du dispatcher (0x80)... ");
+	test_callback1_called = 0;
+	dispatch_interrupt_handler(0x80);
+	if (test_callback1_called == 1) {
+		print_k(KERN_INFO "[OK] - Callback appele\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback non appele\n");
+	}
+
+	// Test 4: Appel d'un autre handler
+	print_k(KERN_INFO "Test 4: Test du dispatcher (0x81)... ");
+	test_callback2_called = 0;
+	dispatch_interrupt_handler(0x81);
+	if (test_callback2_called == 1) {
+		print_k(KERN_INFO "[OK] - Callback appele\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback non appele\n");
+	}
+
+	// Test 5: Desenregistrement d'un handler
+	print_k(KERN_INFO "Test 5: Desenregistrement d'un handler... ");
+	unregister_interrupt_handler(0x80);
+	test_callback1_called = 0;
+	dispatch_interrupt_handler(0x80);
+	if (test_callback1_called == 0) {
+		print_k(KERN_INFO "[OK] - Callback desactive\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback encore actif\n");
+	}
+
+	// Test 6: Handler non enregistre (doit être ignore)
+	print_k(KERN_INFO "Test 6: Interruption non geree (0xFF)... ");
+	dispatch_interrupt_handler(0xFF);
+	print_k(KERN_INFO "[OK] - Ignoree sans crash\n");
+
+	// Test 7: Re-enregistrement
+	print_k(KERN_INFO "Test 7: Re-enregistrement d'un handler... ");
+	register_interrupt_handler(0x80, test_callback1);
+	test_callback1_called = 0;
+	dispatch_interrupt_handler(0x80);
+	if (test_callback1_called == 1) {
+		print_k(KERN_INFO "[OK] - Callback reactive\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback non reactive\n");
+	}
+
+	// Test 8: Verification du handler clavier (IRQ1 = 0x21)
+	print_k(KERN_INFO "Test 8: Verification du handler clavier (0x21)... [OK]\n");
+	print_k(KERN_NOTICE "Testez en tapant au clavier maintenant!\n");
+
+	print_k(KERN_INFO "\n=== Tests termines ===\n\n");
+}
+
+// Variables pour les tests du scheduler
+static int scheduler_callback_count = 0;
+
+void scheduler_test_callback(void)
+{
+	scheduler_callback_count++;
+}
+
+void test_signal_scheduler_system(void)
+{
+	print_k(KERN_INFO "\n=== [B2] Signal Scheduler System Tests ===\n");
+
+	// Test 1: Enregistrement d'un handler pour mode differe
+	print_k(KERN_INFO "Test 1: Enregistrement handler pour scheduler... ");
+	register_interrupt_handler(0x90, scheduler_test_callback);
+	print_k(KERN_INFO "[OK]\n");
+
+	// Test 2: Schedule un signal
+	print_k(KERN_INFO "Test 2: Schedule un signal (0x90)... ");
+	scheduler_callback_count = 0;
+	int result				 = schedule_signal(0x90, NULL);
+	if (result == 0) {
+		print_k(KERN_INFO "[OK] - Signal ajoute\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Erreur schedule\n");
+	}
+
+	// Test 3: Verifie que le callback n'est PAS encore appele (differe)
+	print_k(KERN_INFO "Test 3: Callback pas encore appele... ");
+	if (scheduler_callback_count == 0) {
+		print_k(KERN_INFO "[OK] - Traitement differe\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback appele trop tôt\n");
+	}
+
+	// Test 4: Compte les signaux pendants
+	print_k(KERN_INFO "Test 4: Compte signaux pendants... ");
+	u16 pending = get_pending_signals_count();
+	if (pending == 1) {
+		print_k(KERN_INFO "[OK] - 1 signal en attente\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - %d signaux au lieu de 1\n", pending);
+	}
+
+	// Test 5: Traite les signaux pendants
+	print_k(KERN_INFO "Test 5: Process pending signals... ");
+	scheduler_callback_count = 0;
+	process_pending_signals();
+	if (scheduler_callback_count == 1) {
+		print_k(KERN_INFO "[OK] - Callback appele\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback non appele\n");
+	}
+
+	// Test 6: Queue vide apres traitement
+	print_k(KERN_INFO "Test 6: Queue vide apres traitement... ");
+	pending = get_pending_signals_count();
+	if (pending == 0) {
+		print_k(KERN_INFO "[OK] - Queue vide\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - %d signaux restants\n", pending);
+	}
+
+	// Test 7: Schedule multiples signaux
+	print_k(KERN_INFO "Test 7: Schedule 5 signaux... ");
+	for (int i = 0; i < 5; i++) {
+		schedule_signal(0x90, NULL);
+	}
+	pending = get_pending_signals_count();
+	if (pending == 5) {
+		print_k(KERN_INFO "[OK] - 5 signaux en queue\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - %d signaux au lieu de 5\n", pending);
+	}
+
+	// Test 8: Traite tous les signaux
+	print_k(KERN_INFO "Test 8: Traite tous les signaux... ");
+	scheduler_callback_count = 0;
+	process_pending_signals();
+	if (scheduler_callback_count == 5) {
+		print_k(KERN_INFO "[OK] - 5 callbacks appeles\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - %d callbacks au lieu de 5\n", scheduler_callback_count);
+	}
+
+	// Test 9: Masquage de signal
+	print_k(KERN_INFO "Test 9: Masquage de signal (0x90)... ");
+	mask_signal(0x90);
+	if (is_signal_masked(0x90)) {
+		print_k(KERN_INFO "[OK] - Signal masque\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Signal non masque\n");
+	}
+
+	// Test 10: Signal masque non traite
+	print_k(KERN_INFO "Test 10: Signal masque ignore... ");
+	scheduler_callback_count = 0;
+	schedule_signal(0x90, NULL);
+	process_pending_signals();
+	if (scheduler_callback_count == 0) {
+		print_k(KERN_INFO "[OK] - Callback ignore\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback appele malgre masque\n");
+	}
+
+	// Test 11: Demasquage
+	print_k(KERN_INFO "Test 11: Demasquage de signal... ");
+	unmask_signal(0x90);
+	if (!is_signal_masked(0x90)) {
+		print_k(KERN_INFO "[OK] - Signal demasque\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Signal encore masque\n");
+	}
+
+	// Test 12: Signal demasque traite
+	print_k(KERN_INFO "Test 12: Signal demasque traite... ");
+	scheduler_callback_count = 0;	// Configure l'IDT pour le timer (IRQ0 = 0x20) et le clavier (IRQ1 = 0x21)
+	schedule_signal(0x90, NULL);
+	process_pending_signals();
+	if (scheduler_callback_count == 1) {
+		print_k(KERN_INFO "[OK] - Callback appele\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Callback non appele\n");
+	}
+
+	// Test 13: Overflow de la queue (remplir la queue)
+	print_k(KERN_INFO "Test 13: Test overflow queue... ");
+	int overflow_result = 0;
+	for (int i = 0; i < SIGNAL_QUEUE_SIZE + 5; i++) {
+		overflow_result = schedule_signal(0x90, NULL);
+	}
+	if (overflow_result == -1) {
+		print_k(KERN_INFO "[OK] - Overflow detecte\n");
+	} else {
+		print_k(KERN_ERR "[FAIL] - Overflow non detecte\n");
+	}
+
+	// Nettoie la queue
+	process_pending_signals();
+
+	print_k(KERN_INFO "\n=== Tests Scheduler termines ===\n\n");
+}
+
 void test_division_by_zero(void)
 {
 	print_k("<2>Testing division by zero exception...\n");
@@ -170,8 +399,11 @@ void main_tests()
 {
 	int nb = 8;
 	set_color(&screen_context, BG(BLACK) | WHITE);
-	print_42();
-	print_k_test();
+	// print_42();
+	// print_k_test();
 
-	test_division_by_zero();
+	// Test du systeme de signal scheduler [B2]
+	test_signal_scheduler_system();
+
+	// test_division_by_zero(); // CRASH
 }

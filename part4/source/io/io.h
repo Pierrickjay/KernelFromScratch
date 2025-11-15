@@ -3,10 +3,10 @@
 
 #include "types.h" // Si tu utilises des types custom (u8, u16, etc.)
 
-// Écrire un octet (byte) sur le port spécifié
+// ecrire un octet (byte) sur le port specifie
 void outb(u16 port, u8 data);
 
-// Lire un octet (byte) depuis le port spécifié
+// Lire un octet (byte) depuis le port specifie
 u8 inb(u16 port);
 
 #endif

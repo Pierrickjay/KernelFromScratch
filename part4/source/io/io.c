@@ -1,6 +1,6 @@
 #include "io.h"
 
-// Fonction d'écriture d'un octet sur un port
+// Fonction d'ecriture d'un octet sur un port
 void outb(u16 port, u8 data)
 {
 	asm volatile("outb %0, %1" : : "a"(data), "Nd"(port));
