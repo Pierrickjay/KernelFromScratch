@@ -64,7 +64,12 @@ CODE_TARGET = $(OBJ_DIRECTORY)$(KERNEL_NAME)$(KERNEL_VERSION)
 ISO_TARGET = $(KERNEL_NAME)$(KERNEL_VERSION).iso
 
 # Rules
-all: $(ISO_TARGET)
+all: compile_commands.json $(ISO_TARGET)
+
+# Regenerate compile_commands.json when Makefile or source files change
+compile_commands.json: Makefile $(addprefix $(SRC_DIRECTORY), $(C_FILES))
+	@echo "Regenerating compile_commands.json..."
+	@bear -- $(MAKE) --no-print-directory re > /dev/null 2>&1 || true
 
 virtualisation: all
 	$(QEMU) -enable-kvm -cdrom $(ISO_TARGET) -m 1G -boot d -serial stdio -monitor pty
@@ -107,7 +112,7 @@ clean:
 	rm -rf $(OBJ_DIRECTORY)
 
 fclean : clean
-	rm -rf $(ISO_TARGET)
+	rm -rf $(ISO_TARGET) compile_commands.json
 
 re: fclean all
 
