@@ -1,6 +1,16 @@
 # Compilers
 C_COMPILER = gcc
-C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD
+C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD \
+	-I$(SRC_DIRECTORY) \
+	-I$(SRC_DIRECTORY)boot \
+	-I$(SRC_DIRECTORY)cpu \
+	-I$(SRC_DIRECTORY)drivers/keyboard \
+	-I$(SRC_DIRECTORY)drivers/serial \
+	-I$(SRC_DIRECTORY)io \
+	-I$(SRC_DIRECTORY)display \
+	-I$(SRC_DIRECTORY)shell \
+	-I$(SRC_DIRECTORY)lib \
+	-I$(SRC_DIRECTORY)tests
 ASM_COMPILER = nasm
 ASM_OPTIONS = -f elf32
 
@@ -11,36 +21,37 @@ LINKER_OPTIONS = -m elf_i386 -T
 SRC_DIRECTORY = source/
 
 C_FILES = main.c \
-	screen_manager.c \
-	print_manager.c \
-	memory_manager.c \
-	cursor.c \
-	io.c \
-	utils.c \
-	interrupts.c \
-	keyboard_interrupts.c \
-	char_stacked_queue.c \
-	keyboard_input.c \
-	keyboard_text_mode_map.c \
-	tests.c \
-	serial.c \
-	gdt.c \
-	mini_minishell.c \
-	string.c
+	display/screen_manager.c \
+	display/print_manager.c \
+	lib/memory_manager.c \
+	display/cursor.c \
+	io/io.c \
+	lib/utils.c \
+	cpu/interrupts.c \
+	drivers/keyboard/keyboard_interrupts.c \
+	lib/char_stacked_queue.c \
+	drivers/keyboard/keyboard_input.c \
+	drivers/keyboard/keyboard_text_mode_map.c \
+	drivers/keyboard/keyboard_map.c \
+	tests/tests.c \
+	drivers/serial/serial.c \
+	cpu/gdt.c \
+	shell/mini_minishell.c \
+	lib/string.c
 
-ASM_FILES = boot.asm \
-	interrupt_handlers.asm \
-	gdt_flush.asm
+ASM_FILES = boot/boot.asm \
+	cpu/interrupt_handlers.asm \
+	cpu/gdt_flush.asm
 
-LINKER_FILE = $(SRC_DIRECTORY)linker.ld
+LINKER_FILE = $(SRC_DIRECTORY)boot/linker.ld
 
-GRUB_CFG = $(SRC_DIRECTORY)grub.cfg
+GRUB_CFG = $(SRC_DIRECTORY)boot/grub.cfg
 
 # Targets files
 OBJ_DIRECTORY = obj/
 
 KERNEL_NAME = kfs
-KERNEL_VERSION = 2
+KERNEL_VERSION = 4
 
 ASM_OBJ = $(addprefix $(OBJ_DIRECTORY), $(ASM_FILES:.asm=.o))
 C_OBJ = $(addprefix $(OBJ_DIRECTORY), $(C_FILES:.c=.o))
@@ -71,7 +82,16 @@ $(CODE_TARGET): $(C_OBJ) $(ASM_OBJ)
 	$(LINKER) $(LINKER_OPTIONS) $(LINKER_FILE) -o $(CODE_TARGET) $(OBJ)
 
 $(OBJ_DIRECTORY):
-	mkdir -p $(OBJ_DIRECTORY)
+	mkdir -p $(OBJ_DIRECTORY) \
+		$(OBJ_DIRECTORY)boot \
+		$(OBJ_DIRECTORY)cpu \
+		$(OBJ_DIRECTORY)drivers/keyboard \
+		$(OBJ_DIRECTORY)drivers/serial \
+		$(OBJ_DIRECTORY)io \
+		$(OBJ_DIRECTORY)display \
+		$(OBJ_DIRECTORY)shell \
+		$(OBJ_DIRECTORY)lib \
+		$(OBJ_DIRECTORY)tests
 
 $(ASM_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.asm | $(OBJ_DIRECTORY)
 	$(ASM_COMPILER) $(ASM_OPTIONS) $< -o $@
@@ -80,7 +100,7 @@ $(C_OBJ): $(OBJ_DIRECTORY)%.o: $(SRC_DIRECTORY)%.c | $(OBJ_DIRECTORY)
 	$(C_COMPILER) $(C_OPTIONS) $< -o $@
 
 format:
-	clang-format -i $(SRC_DIRECTORY)*.c $(SRC_DIRECTORY)*.h
+	find $(SRC_DIRECTORY) -name "*.c" -o -name "*.h" | xargs clang-format -i
 
 clean:
 	-rm $(DEPS)
