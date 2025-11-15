@@ -1,3 +1,5 @@
+.NOTPARALLEL:
+
 # Compilers
 C_COMPILER = gcc
 C_OPTIONS = -fno-builtin -fno-exceptions -fno-stack-protector -nostdlib -nodefaultlibs -m32 -c -MMD \
@@ -33,6 +35,7 @@ C_FILES = main.c \
 	cpu/signal_scheduler.c \
 	cpu/signal_handlers.c \
 	cpu/exception_handlers.c \
+	cpu/cpu_exception_handlers.c \
 	cpu/panic.c \
 	drivers/keyboard/keyboard_interrupts.c \
 	drivers/timer/timer.c \
