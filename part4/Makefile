@@ -67,7 +67,7 @@ KERNEL_VERSION = 4
 ASM_OBJ = $(addprefix $(OBJ_DIRECTORY), $(ASM_FILES:.asm=.o))
 C_OBJ = $(addprefix $(OBJ_DIRECTORY), $(C_FILES:.c=.o))
 OBJ = $(ASM_OBJ) $(C_OBJ)
-DEPS := ${OBJ:.o=.d}
+DEPS := ${C_OBJ:.o=.d}
 QEMU := /usr/bin/qemu-system-x86_64
 
 CODE_TARGET = $(OBJ_DIRECTORY)$(KERNEL_NAME)$(KERNEL_VERSION)
