@@ -1,1 +1,5 @@
-ignore_me
+obj
+kfs4
+kfs4.iso
+qemu.log
+compile_commands.json

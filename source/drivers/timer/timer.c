@@ -29,8 +29,8 @@ void init_timer(void)
 
 	timer_ticks = 0;
 
-	print_k(KERN_INFO "[TIMER] Initialise a %d Hz (tick toutes les %d ms)\n",
-			TIMER_FREQ, 1000 / TIMER_FREQ);
+	print_k(KERN_INFO "[TIMER] Initialise a %d Hz \n",
+					TIMER_FREQ, 1000 / TIMER_FREQ);
 }
 
 void timer_handler_c(void)
@@ -38,11 +38,13 @@ void timer_handler_c(void)
 	timer_ticks++;
 
 	// Toutes les N interruptions, schedule un signal differe
-	if (timer_ticks % SIGNAL_EVERY_N_TICKS == 0) {
+	if (timer_ticks % SIGNAL_EVERY_N_TICKS == 0)
+	{
 		int result = schedule_signal(SIGNAL_TIMER, NULL);
-		if (result == 0) {
+		if (result == 0)
+		{
 			print_k(KERN_DEBUG "[ISR] Timer tick %d -> signal 0x%x ajoute a la queue\n",
-					timer_ticks, SIGNAL_TIMER);
+							timer_ticks, SIGNAL_TIMER);
 		}
 	}
 
