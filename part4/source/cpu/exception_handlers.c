@@ -1,4 +1,5 @@
 #include "exception_handlers.h"
+#include "cpu_exception_handlers.h"
 #include "panic.h"
 #include "print_manager.h"
 
@@ -27,18 +28,21 @@ static const char *exception_names[] = {"Division By Zero",
 										"Machine Check",
 										"SIMD Floating Point Exception"};
 
+const char *get_exception_name(u8 exception_num)
+{
+	if (exception_num < 20) {
+		return exception_names[exception_num];
+	}
+	return "Unknown Exception";
+}
+
 static void default_exception_handler(t_registers *regs)
 {
-	const char *name = "Unknown Exception";
+	const char *name = get_exception_name(regs->int_no);
 
-	if (regs->int_no < 20) {
-		name = exception_names[regs->int_no];
-	}
-
-	if (regs->int_no == CPU_EXCEPTION_PAGE_FAULT) {
-		u32 faulting_address;
-		asm volatile("mov %%cr2, %0" : "=r"(faulting_address));
-		print_k("<0>Exception %x: %s at address %x\n", regs->int_no, name, faulting_address);
+	if (regs->err_code != 0) {
+		print_k("<0>Exception %x: %s (Error Code: 0x%x)\n", regs->int_no, name,
+				regs->err_code);
 	}
 	else {
 		print_k("<0>Exception %x: %s\n", regs->int_no, name);
@@ -69,4 +73,6 @@ void init_exception_handlers(void)
 	for (int i = 0; i < MAX_EXCEPTION_HANDLERS; i++) {
 		exception_handlers[i] = 0;
 	}
+
+	register_cpu_exception_handlers();
 }

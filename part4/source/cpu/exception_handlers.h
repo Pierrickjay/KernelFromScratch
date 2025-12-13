@@ -59,5 +59,6 @@ extern void isr19(void);
 void exception_dispatcher(t_registers *regs);
 void register_exception_handler(u8 exception_num, t_exception_handler handler);
 void init_exception_handlers(void);
+const char *get_exception_name(u8 exception_num);
 
 #endif
