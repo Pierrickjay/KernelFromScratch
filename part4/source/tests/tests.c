@@ -412,39 +412,6 @@ void test_division_by_zero(void)
 	print_k("<2>This should never print: %d\n", c);
 }
 
-// PAGE FAULT TESTS -> TO BE ENABLED WHEN PAGING IS ENABLED
-// void test_page_fault_null_read(void)
-// {
-// 	print_k("<2>Testing Page Fault: NULL pointer read...\n");
-// 	volatile int *ptr = (int *)0x0;
-// 	volatile int value = *ptr;
-// 	print_k("<2>This should never print: %d\n", value);
-// }
-
-// void test_page_fault_null_write(void)
-// {
-// 	print_k("<2>Testing Page Fault: NULL pointer write...\n");
-// 	volatile int *ptr = (int *)0x0;
-// 	*ptr = 42;
-// 	print_k("<2>This should never print\n");
-// }
-
-// void test_page_fault_invalid_read(void)
-// {
-// 	print_k("<2>Testing Page Fault: Invalid address read...\n");
-// 	volatile int *ptr = (int *)0xDEADBEEF;
-// 	volatile int value = *ptr;
-// 	print_k("<2>This should never print: %d\n", value);
-// }
-
-// void test_page_fault_invalid_write(void)
-// {
-// 	print_k("<2>Testing Page Fault: Invalid address write...\n");
-// 	volatile int *ptr = (int *)0xCAFEBABE;
-// 	*ptr = 0x42424242;
-// 	print_k("<2>This should never print\n");
-// }
-
 void test_invalid_opcode(void)
 {
 	print_k("<2>Testing Invalid Opcode exception...\n");
