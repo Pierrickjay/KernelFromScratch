@@ -444,5 +444,5 @@ void main_tests()
 	// Test du systeme de signal scheduler [B2]
 	test_signal_scheduler_system();
 
-	// test_division_by_zero(); // CRASH
+	// test_division_by_zero(); // Will cause a kernel panic
 }

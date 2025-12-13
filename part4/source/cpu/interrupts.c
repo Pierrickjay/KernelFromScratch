@@ -32,7 +32,7 @@ void load_idt()
 
 void init_pic(void)
 {
-// Initialisation PIC maître
+	// Initialisation PIC maître
 	outb(0x20, 0x11); // ICW1 : initialisation
 	outb(0x21, 0x20); // ICW2 : offset IDT (0x20)
 	outb(0x21, 0x04); // ICW3 : indique qu'il y a un PIC esclave (IRQ2)
